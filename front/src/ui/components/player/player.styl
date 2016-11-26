@@ -1,0 +1,100 @@
+.player
+  width 100%
+  height 32px
+  padding 0 32px 0 32px * 3
+  position relative
+  margin-bottom 20px
+
+  &Controls
+    width 32px * 3
+    position absolute
+    top 0
+    left 0
+
+  &Button
+    cursor pointer
+    padding 0
+    width 32px
+    height 32px
+    background transparent
+    border none
+    outline none
+    opacity .9
+    background-size 90%
+    background-repeat no-repeat
+    background-position center
+
+    &[disabled]
+      opacity .3
+      pointer-events none
+
+    &:hover
+      opacity 1
+      
+    &.__prev
+      background-image url("../../icons/rewind.svg")
+
+    &.__next
+      background-image url("../../icons/fast-forward.svg")
+      
+    &.__play
+      background-image url("../../icons/play-button.svg")
+    
+    &.__pause 
+      background-image url("../../icons/pause.svg")
+    
+    &.__showList
+      background-image url("../../icons/list.svg")
+      position absolute
+      top 0
+      right 0
+
+  &Progress
+    position relative
+    padding 0 10px
+    height 32px
+    padding-top 4px
+
+    &Bar
+      border-radius 3px
+      height 6px
+      background rgba(81, 174, 240, .5)
+      position absolute
+      left 10px
+      right 10px
+      bottom 4px
+
+    &Handle
+      cursor pointer
+      position absolute
+      width 12px
+      height 12px
+      left -3px
+      top -3px
+      background #51aef0
+      border-radius 50%
+      opacity .9
+
+      &:hover
+        opacity 1
+
+  &PlayList
+    z-index 1000
+    position absolute
+    right 0
+    top 40px
+    background #fff
+    padding 10px 0
+    border-radius 4px
+    box-shadow 0 0 30px rgba(0,0,0,.2)
+
+    &Title
+      margin 0 0 10px
+      padding 0 20px
+
+    &Tracks
+      margin 0
+      padding 0
+
+    &TrackTitle
+      font-size 12px

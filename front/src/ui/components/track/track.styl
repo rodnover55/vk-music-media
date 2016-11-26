@@ -1,0 +1,19 @@
+.track
+  height 32px
+  line-height 32px
+  list-style none
+  position relative
+  padding 0 20px 0 60px
+
+  &.__active
+    background rgba(81,174,240,0.1)
+
+
+  &Play
+    @extend .playerButton
+    @extend .playerButton.__play
+    position absolute
+    top 6px
+    left 20px
+    width 20px
+    height 20px

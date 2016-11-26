@@ -42,10 +42,14 @@ export default class Layout extends React.Component {
             <div className="layout">
                 <Player />
                 <nav className="layoutNav">
-                    <IndexLink to="/" className="layoutNavLink" activeClassName={"__active"}>New</IndexLink>
-                    <Link to="/tags" className="layoutNavLink" activeClassName={"__active"}>Tags</Link>
+                    <IndexLink to="/" className="layoutNavLink" activeClassName={"__active"}>
+                        Свежие плейлисты
+                    </IndexLink>
+                    <Link to="/tags" className="layoutNavLink" activeClassName={"__active"}>
+                        Поиск по тегам
+                    </Link>
                 </nav>
-                <button disabled={this.state.refreshDisabled} onClick={()=>this.onRefreshClick()}>
+                <button style={{display: 'none'}} disabled={this.state.refreshDisabled} onClick={()=>this.onRefreshClick()}>
                     Обновить посты
                 </button>
                 {this.props.children}

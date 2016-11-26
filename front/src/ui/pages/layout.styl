@@ -2,7 +2,40 @@ html, body
   margin 0
   padding 0
 
+*
+  box-sizing border-box
+
 .layout
   width 607px
   margin auto
+  font-family sans-serif
+  font-size 14px
+  color rgba(0,0,0,.8)
+  padding-top 10px
 
+  &Nav
+    border-bottom 1px solid rgba(81,174,240,0.1)
+    position relative
+    margin-bottom 20px
+
+    &Link
+      display inline-block
+      height 32px
+      color rgba(0,0,0,.8)
+      text-decoration none
+      position relative
+      top 1px
+      font-size 16px
+      background #fff
+      border-bottom 1px solid rgba(81,174,240,0.1)
+      padding 8px 16px
+      border-radius 4px 4px 0 0
+
+      &.__active
+        background rgba(81,174,240,0.1)
+        border-bottom none
+
+@import "../components/player/player.styl"
+@import "../components/track/track.styl"
+@import "../components/post/post.styl"
+@import "../components/tag/tag.styl"

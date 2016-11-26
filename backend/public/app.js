@@ -35501,30 +35501,19 @@ var Player = function (_React$Component) {
             this.playerService.playTrack(post.tracks[0]);
         }
     }, {
-        key: 'currentPlaylist',
-        value: function currentPlaylist() {
-            if (this.state.post === null) {
-                return '';
-            }
-
-            return _react2.default.createElement(
-                'div',
-                null,
-                '\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u043B\u0435\u0439\u043B\u0438\u0441\u0442: ',
-                this.state.post.title
-            );
-        }
-    }, {
         key: 'currentTrack',
         value: function currentTrack() {
             if (this.state.currentTrack === null) {
-                return '';
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'playerPlayListTrackTitle' },
+                    '\u041F\u043B\u0435\u0439\u043B\u0438\u0441\u0442 \u043F\u0443\u0441\u0442'
+                );
             }
 
             return _react2.default.createElement(
                 'div',
-                null,
-                '\u0421\u0435\u0439\u0447\u0430\u0441 \u0438\u0433\u0440\u0430\u0435\u0442:',
+                { className: 'playerPlayListTrackTitle' },
                 this.state.currentTrack.artist,
                 ' \u2014 ',
                 this.state.currentTrack.title
@@ -35541,9 +35530,19 @@ var Player = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { hidden: this.state.hidePlaylist, className: 'playerPlayList' },
-                this.state.post.tracks.map(function (track, index) {
-                    return _react2.default.createElement(_track2.default, { key: index, track: track, currentTrack: _this2.state.currentTrack });
-                })
+                _react2.default.createElement(
+                    'h4',
+                    { className: 'playerPlayListTitle' },
+                    '\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u043B\u0435\u0439\u043B\u0438\u0441\u0442: ',
+                    this.state.post.title
+                ),
+                _react2.default.createElement(
+                    'ul',
+                    { className: 'playerPlayListTracks' },
+                    this.state.post.tracks.map(function (track, index) {
+                        return _react2.default.createElement(_track2.default, { key: index, track: track, currentTrack: _this2.state.currentTrack });
+                    })
+                )
             );
         }
     }, {
@@ -35596,50 +35595,45 @@ var Player = function (_React$Component) {
                 'div',
                 { className: 'player' },
                 this.player(),
-                this.currentPlaylist(),
                 _react2.default.createElement(
-                    'button',
-                    {
+                    'div',
+                    { className: 'playerControls' },
+                    _react2.default.createElement('button', {
                         disabled: this.state.currentTrack === null,
                         onClick: function onClick() {
                             return _this3.playPrev();
                         },
-                        className: 'playerButton __prev' },
-                    '\u2190'
-                ),
-                _react2.default.createElement(
-                    'button',
-                    {
+                        className: 'playerButton __prev' }),
+                    _react2.default.createElement('button', {
                         disabled: this.state.currentTrack === null,
                         onClick: function onClick() {
                             return _this3.playPause();
                         },
-                        className: 'playerButton __play' },
-                    'Play'
-                ),
-                _react2.default.createElement(
-                    'button',
-                    {
+                        className: this.state.playerOptions.playing ? 'playerButton __pause' : 'playerButton __play' }),
+                    _react2.default.createElement('button', {
                         disabled: this.state.currentTrack === null,
                         onClick: function onClick() {
                             return _this3.playNext();
                         },
-                        className: 'playerButton __next' },
-                    '\u2192'
+                        className: 'playerButton __next' })
                 ),
-                this.currentTrack(),
-                _react2.default.createElement('div', { className: 'playerProgress' }),
-                _react2.default.createElement('div', { className: 'playerSound' }),
                 _react2.default.createElement(
-                    'button',
-                    {
-                        disabled: this.state.currentTrack === null,
-                        onClick: function onClick() {
-                            return _this3.togglePlaylist();
-                        },
-                        className: 'playerShowPlaylist' },
-                    'show playlist'
+                    'div',
+                    { className: 'playerProgress' },
+                    this.currentTrack(),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'playerProgressBar' },
+                        _react2.default.createElement('div', { className: 'playerProgressHandle' })
+                    )
                 ),
+                _react2.default.createElement('div', { className: 'playerSound' }),
+                _react2.default.createElement('button', {
+                    disabled: this.state.currentTrack === null,
+                    onClick: function onClick() {
+                        return _this3.togglePlaylist();
+                    },
+                    className: 'playerButton __showList' }),
                 this.playlist()
             );
         }
@@ -35777,6 +35771,9 @@ var Post = function (_React$Component) {
         //noinspection JSUnresolvedVariable
         var _this = _possibleConstructorReturn(this, (_ref = Post.__proto__ || Object.getPrototypeOf(Post)).call.apply(_ref, [this].concat(args)));
 
+        _this.state = {
+            collapsed: true
+        };
         _this.playerService = _di2.default.container.PlayerService;
         return _this;
     }
@@ -35790,17 +35787,35 @@ var Post = function (_React$Component) {
             this.playerService.playPost(id);
         }
     }, {
+        key: 'expand',
+        value: function expand() {
+            if (this.state.collapsed) {
+                this.setState({ collapsed: false });
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
             return _react2.default.createElement(
                 'article',
-                { className: 'post' },
-                _react2.default.createElement('img', { className: 'postImage', src: this.props.image, alt: '' }),
+                { className: this.state.collapsed ? 'post __collapsed' : 'post' },
+                _react2.default.createElement('div', {
+                    className: 'postImage',
+                    style: { backgroundImage: 'url(' + this.props.image + ')' } }),
+                _react2.default.createElement(
+                    'h4',
+                    { className: 'postTitle' },
+                    this.props.title
+                ),
                 _react2.default.createElement(
                     'div',
-                    { className: 'postDescription __collapsed' },
+                    {
+                        onClick: function onClick() {
+                            return _this2.expand();
+                        },
+                        className: this.state.collapsed ? 'postDescription __collapsed' : 'postDescription' },
                     this.props.description
                 ),
                 _react2.default.createElement(
@@ -35810,13 +35825,9 @@ var Post = function (_React$Component) {
                         return _react2.default.createElement(_tag2.default, { key: index, tag: tag });
                     })
                 ),
-                _react2.default.createElement(
-                    'button',
-                    { onClick: function onClick() {
-                            return _this2.onPlayClick(_this2.props.id);
-                        }, className: 'postPlay' },
-                    '\u0412\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0441\u0442\u0438 \u043F\u043E\u0441\u0442'
-                )
+                _react2.default.createElement('button', { onClick: function onClick() {
+                        return _this2.onPlayClick(_this2.props.id);
+                    }, className: 'postPlay' })
             );
         }
     }]);
@@ -35945,6 +35956,7 @@ var Tag = function (_React$Component) {
             return _react2.default.createElement(
                 _reactRouter.Link,
                 { className: 'tag', to: this.tagUrl },
+                '#',
                 this.tagName
             );
         }
@@ -36023,18 +36035,14 @@ var Track = function (_React$Component) {
             var _this2 = this;
 
             return _react2.default.createElement(
-                'div',
+                'li',
                 { className: this.className },
                 this.props.track.artist,
                 ' \u2014 ',
                 this.props.track.title,
-                _react2.default.createElement(
-                    'button',
-                    { onClick: function onClick() {
-                            return _this2.onPlayClick(_this2.props.track);
-                        }, className: 'trackPlay' },
-                    'Play'
-                )
+                _react2.default.createElement('button', { onClick: function onClick() {
+                        return _this2.onPlayClick(_this2.props.track);
+                    }, className: 'trackPlay' })
             );
         }
     }, {
@@ -36176,17 +36184,17 @@ var Layout = function (_React$Component) {
                     _react2.default.createElement(
                         _reactRouter.IndexLink,
                         { to: '/', className: 'layoutNavLink', activeClassName: "__active" },
-                        'New'
+                        '\u0421\u0432\u0435\u0436\u0438\u0435 \u043F\u043B\u0435\u0439\u043B\u0438\u0441\u0442\u044B'
                     ),
                     _react2.default.createElement(
                         _reactRouter.Link,
                         { to: '/tags', className: 'layoutNavLink', activeClassName: "__active" },
-                        'Tags'
+                        '\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u0442\u0435\u0433\u0430\u043C'
                     )
                 ),
                 _react2.default.createElement(
                     'button',
-                    { disabled: this.state.refreshDisabled, onClick: function onClick() {
+                    { style: { display: 'none' }, disabled: this.state.refreshDisabled, onClick: function onClick() {
                             return _this2.onRefreshClick();
                         } },
                     '\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u043E\u0441\u0442\u044B'

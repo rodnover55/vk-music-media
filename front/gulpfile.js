@@ -24,7 +24,9 @@ gulp.task('scripts', () => {
 
 gulp.task('styles', () => {
     gulp.src('./src/ui/pages/layout.styl')
-        .pipe(stylus())
+        .pipe(stylus({
+            url: { name: 'url', limit: false }
+        }))
         .pipe(rename('app.css'))
         .pipe(gulp.dest('./static'))
         .pipe(rename({dirname: ''}))

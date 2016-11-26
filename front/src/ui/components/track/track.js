@@ -29,10 +29,10 @@ export default class Track extends React.Component {
 
     render() {
         return (
-            <div className={this.className}>
+            <li className={this.className}>
                 {this.props.track.artist} &mdash; {this.props.track.title}
-                <button onClick={()=>this.onPlayClick(this.props.track)} className="trackPlay">Play</button>
-            </div>
+                <button onClick={()=>this.onPlayClick(this.props.track)} className="trackPlay"></button>
+            </li>
         )
     }
 }

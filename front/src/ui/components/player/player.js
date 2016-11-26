@@ -54,24 +54,13 @@ export default class Player extends React.Component {
         this.playerService.playTrack(post.tracks[0])
     }
 
-    currentPlaylist() {
-        if (this.state.post === null) {
-            return '';
-        }
-
-        return (
-            <div>Текущий плейлист: {this.state.post.title}</div>
-        );
-    }
-
     currentTrack() {
         if (this.state.currentTrack === null) {
-            return '';
+            return <div className="playerPlayListTrackTitle">Плейлист пуст</div>;
         }
 
         return (
-            <div>
-                Сейчас играет:
+            <div className="playerPlayListTrackTitle">
                 {this.state.currentTrack.artist} &mdash; {this.state.currentTrack.title}
             </div>
         );
@@ -83,9 +72,12 @@ export default class Player extends React.Component {
         }
         return (
             <div hidden={this.state.hidePlaylist} className="playerPlayList">
-                {this.state.post.tracks.map((track, index) => { return (
-                    <Track key={index} track={track} currentTrack={this.state.currentTrack} />
-                )})}
+                <h4 className="playerPlayListTitle">Текущий плейлист: {this.state.post.title}</h4>
+                <ul className="playerPlayListTracks">
+                    {this.state.post.tracks.map((track, index) => { return (
+                        <Track key={index} track={track} currentTrack={this.state.currentTrack} />
+                    )})}
+                </ul>
             </div>
         )
     }
@@ -133,33 +125,34 @@ export default class Player extends React.Component {
         return (
             <div className="player">
                 {this.player()}
-                {this.currentPlaylist()}
-                <button
-                    disabled={this.state.currentTrack === null}
-                    onClick={()=>this.playPrev()}
-                    className="playerButton __prev">
-                    &larr;
-                </button>
-                <button
-                    disabled={this.state.currentTrack === null}
-                    onClick={()=>this.playPause()}
-                    className="playerButton __play">
-                    Play
-                </button>
-                <button
-                    disabled={this.state.currentTrack === null}
-                    onClick={()=>this.playNext()}
-                    className="playerButton __next">
-                    &rarr;
-                </button>
-                {this.currentTrack()}
-                <div className="playerProgress"></div>
+                <div className="playerControls">
+                    <button
+                        disabled={this.state.currentTrack === null}
+                        onClick={()=>this.playPrev()}
+                        className="playerButton __prev">
+                    </button>
+                    <button
+                        disabled={this.state.currentTrack === null}
+                        onClick={()=>this.playPause()}
+                        className={this.state.playerOptions.playing ? 'playerButton __pause' : 'playerButton __play'}>
+                    </button>
+                    <button
+                        disabled={this.state.currentTrack === null}
+                        onClick={()=>this.playNext()}
+                        className="playerButton __next">
+                    </button>
+                </div>
+                <div className="playerProgress">
+                    {this.currentTrack()}
+                    <div className="playerProgressBar">
+                        <div className="playerProgressHandle"></div>
+                    </div>
+                </div>
                 <div className="playerSound"></div>
                 <button
                     disabled={this.state.currentTrack === null}
                     onClick={()=>this.togglePlaylist()}
-                    className="playerShowPlaylist">
-                    show playlist
+                    className="playerButton __showList">
                 </button>
                 {this.playlist()}
             </div>

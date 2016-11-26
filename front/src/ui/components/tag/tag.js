@@ -13,7 +13,7 @@ export default class Tag extends React.Component {
 
     render () {
         return (
-            <Link className="tag" to={this.tagUrl}>{this.tagName}</Link>
+            <Link className="tag" to={this.tagUrl}>#{this.tagName}</Link>
         )
     }
 }
