@@ -16,7 +16,9 @@ gulp.task('scripts', () => {
         .bundle()
         .pipe(source('app.js'))
         .on('error', (e) => { console.log(e) })
-        .pipe(gulp.dest('./static'));
+        .pipe(gulp.dest('./static'))
+        .pipe(rename({dirname: ''}))
+        .pipe(gulp.dest('./../backend/public'));
 });
 
 gulp.task('watch', ['scripts'], () => {
