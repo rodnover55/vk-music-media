@@ -11,6 +11,7 @@ export default class Player extends React.Component {
         post: null,
         currentTrack: null,
         hidePlaylist: true,
+        played: 0,
         playerOptions: {
             playing: false,
             volume: 0.8,
@@ -87,12 +88,16 @@ export default class Player extends React.Component {
         )
     }
 
+    onProgress(played) {
+        this.setState({played: played * 100})
+    }
+
     player() {
         if (this.state.currentTrack === null) {
             return '';
         }
 
-        return <ReactPlayer {...this.state.playerOptions} />
+        return <ReactPlayer onProgress={({played})=>this.onProgress(played)} {...this.state.playerOptions} />
     }
 
     togglePlaylist() {
@@ -150,7 +155,7 @@ export default class Player extends React.Component {
                 <div className="playerProgress">
                     {this.currentTrack()}
                     <div className="playerProgressBar">
-                        <div className="playerProgressHandle"></div>
+                        <div style={{width: this.state.played + '%'}} className="playerProgressHandle"></div>
                     </div>
                 </div>
                 <div className="playerSound"></div>

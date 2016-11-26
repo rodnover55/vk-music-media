@@ -121,17 +121,22 @@ body {
   bottom: 4px;
 }
 .playerProgressHandle {
+  position: relative;
+  width: 0;
+}
+.playerProgressHandle:after {
+  content: '';
   cursor: pointer;
   position: absolute;
   width: 12px;
   height: 12px;
-  left: -3px;
+  right: -3px;
   top: -3px;
   background: #51aef0;
   border-radius: 50%;
   opacity: 0.9;
 }
-.playerProgressHandle:hover {
+.playerProgressHandle:after:hover {
   opacity: 1;
 }
 .playerPlayList {

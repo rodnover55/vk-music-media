@@ -35506,6 +35506,7 @@ var Player = function (_React$Component) {
             post: null,
             currentTrack: null,
             hidePlaylist: true,
+            played: 0,
             playerOptions: {
                 playing: false,
                 volume: 0.8,
@@ -35625,13 +35626,23 @@ var Player = function (_React$Component) {
             );
         }
     }, {
+        key: 'onProgress',
+        value: function onProgress(played) {
+            this.setState({ played: played * 100 });
+        }
+    }, {
         key: 'player',
         value: function player() {
+            var _this3 = this;
+
             if (this.state.currentTrack === null) {
                 return '';
             }
 
-            return _react2.default.createElement(_reactPlayer2.default, this.state.playerOptions);
+            return _react2.default.createElement(_reactPlayer2.default, _extends({ onProgress: function onProgress(_ref3) {
+                    var played = _ref3.played;
+                    return _this3.onProgress(played);
+                } }, this.state.playerOptions));
         }
     }, {
         key: 'togglePlaylist',
@@ -35668,7 +35679,7 @@ var Player = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             return _react2.default.createElement(
                 'div',
@@ -35680,19 +35691,19 @@ var Player = function (_React$Component) {
                     _react2.default.createElement('button', {
                         disabled: this.state.currentTrack === null,
                         onClick: function onClick() {
-                            return _this3.playPrev();
+                            return _this4.playPrev();
                         },
                         className: 'playerButton __prev' }),
                     _react2.default.createElement('button', {
                         disabled: this.state.currentTrack === null,
                         onClick: function onClick() {
-                            return _this3.playPause();
+                            return _this4.playPause();
                         },
                         className: this.state.playerOptions.playing ? 'playerButton __pause' : 'playerButton __play' }),
                     _react2.default.createElement('button', {
                         disabled: this.state.currentTrack === null,
                         onClick: function onClick() {
-                            return _this3.playNext();
+                            return _this4.playNext();
                         },
                         className: 'playerButton __next' })
                 ),
@@ -35703,14 +35714,14 @@ var Player = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'playerProgressBar' },
-                        _react2.default.createElement('div', { className: 'playerProgressHandle' })
+                        _react2.default.createElement('div', { style: { width: this.state.played + '%' }, className: 'playerProgressHandle' })
                     )
                 ),
                 _react2.default.createElement('div', { className: 'playerSound' }),
                 _react2.default.createElement('button', {
                     disabled: this.state.currentTrack === null,
                     onClick: function onClick() {
-                        return _this3.togglePlaylist();
+                        return _this4.togglePlaylist();
                     },
                     className: 'playerButton __showList' }),
                 this.playlist()
