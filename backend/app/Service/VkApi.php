@@ -19,6 +19,8 @@ class VkApi
 
     private $format = 'json';
 
+    private $accessToken;
+
     public function send(string $method, array $data) {
         $curl = new Curl();
 
@@ -38,6 +40,10 @@ class VkApi
 
     public function sendOpen(string $method, array $data) {
         $curl = new Curl();
+
+        if (isset($this->accessToken)) {
+            $data['access_token'] = $this->accessToken;
+        }
 
         $curl->post("https://api.vk.com/method/{$method}", $data);
 
@@ -156,21 +162,19 @@ class VkApi
     /**
      * @return mixed
      */
-    public function getSecret()
+    public function getAccessToken()
     {
-        return $this->secret;
+        return $this->accessToken;
     }
 
     /**
-     * @param mixed $secret
+     * @param mixed $accessToken
      * @return $this
      */
-    public function setSecret($secret)
+    public function setAccessToken($accessToken)
     {
-        $this->secret = $secret;
+        $this->accessToken = $accessToken;
 
         return $this;
     }
-
-
 }

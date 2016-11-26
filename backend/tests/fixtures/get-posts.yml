@@ -1,0 +1,69 @@
+VkMusic\Models\Post:
+  post:
+    pid: 2
+    group_id: 133947888
+    title: 'Post 2 of -133947888'
+    image: 'https://pp.vk.me/c836133/v836133684/fec0/sqSUuju3U-w.jpg'
+    description: 'Новые треки супер группы<br><br>#pagan #folk #russia #ivancore'
+    created_at: '2016-11-26 15:01:45'
+    updated_at: '2016-11-26 18:56:27'
+    tags: ['@tags-1', '@tags-2', '@tags-3', '@tags-4']
+    tracks: ['@tracks-1', '@tracks-2', '@tracks-3']
+VkMusic\Models\Tag:
+  tags-1:
+    tag: pagan
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'
+  tags-2:
+    tag: folk
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'
+  tags-3:
+    tag: russia
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'
+  tags-4:
+    tag: ivancore
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'
+VkMusic\Models\Track:
+  tracks-1:
+    aid: 456240450
+    owner_id: 2000120414
+    artist: 'Zmey Gorynich'
+    title: Борода
+    duration: 232
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'
+  tracks-2:
+    aid: 456240889
+    owner_id: 2000118695
+    artist: 'ZMEY GORYNICH '
+    title: 'Ой, Лёли-Лёли '
+    duration: 239
+    created_at: '2016-11-26 18:56:28'
+    updated_at: '2016-11-26 18:56:28'
+  tracks-3:
+    aid: 456240636
+    owner_id: 2000119573
+    artist: 'Zmey Gorynich'
+    title: 'Чуешь Мою Страсть? (BMTH Cover)'
+    duration: 230
+    created_at: '2016-11-26 18:56:28'
+    updated_at: '2016-11-26 18:56:28'
+VkMusic\Models\Token:
+  token:
+    token: fb0d47f426770dc11314f20cb31ddba5415ca6e94b0245aac20f51192f86ee60
+    user_id: 3108667
+    data: { api_url: 'https://api.vk.com/api.php', api_id: '5747571', api_settings: '1', viewer_id: '3108667', viewer_type: '4', sid: a055563b482ab94e8ee2c9691be03db63422260f080680bb566541af60cba9c13510d049d12c8adf77cfe, secret: a0403670af, access_token: 8c25c7b7ccf9f7e2cc1b27edc3bd6dbfcd7202a48f889dbab4fc6c9e753da4d905cf44349e6ff9099c339, user_id: '0', group_id: '133947888', is_app_user: '1', auth_key: 6c873241b6e8ab0341773cf6e21cb9ad, language: '0', parent_language: '0', ad_info: ElsdCQJdQV1iAwNNRARQBHV7FAsmMQxVUUZGNgBQbwYfQyQrWQA, is_secure: '1', ads_app_id: 5747571_83ee1fbd32b9777a96, api_result: '{"response":[{"uid":3108667,"first_name":"Сергей","last_name":"Мельников","nickname":""}]}', referrer: unknown, lc_name: d48eeb49, sign: 0b25dd54f4c27dfa6992083713a05fa45ca225eec8c5285db4a795a7a91f654b, hash: true }
+    created_at: '2016-11-26 18:57:24'
+    updated_at: '2016-11-26 18:57:24'
+    user: '@users-3108667'
+VkMusic\Models\User:
+  users-3108667:
+    uid: 3108667
+    first_name: Сергей
+    last_name: Мельников
+    nickname: ''
+    created_at: '2016-11-26 18:57:24'
+    updated_at: '2016-11-26 18:57:24'
