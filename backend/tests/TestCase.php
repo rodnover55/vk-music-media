@@ -126,8 +126,6 @@ abstract class TestCase extends ParentTestCase
         $cookies = [], $files = [],
         $server = [], $content = null
     ) {
-        $server = [];
-
         if (isset($this->token)) {
             $server['HTTP_X_TOKEN'] = $this->token;
         }
