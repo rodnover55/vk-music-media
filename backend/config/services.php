@@ -30,7 +30,7 @@ return [
     ],
 
     'stripe' => [
-        'model' => VkMusic\User::class,
+        'model' => \VkMusic\Models\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],

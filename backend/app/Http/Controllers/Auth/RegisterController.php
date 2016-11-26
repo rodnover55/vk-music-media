@@ -2,7 +2,7 @@
 
 namespace VkMusic\Http\Controllers\Auth;
 
-use VkMusic\User;
+use VkMusic\Models\User;
 use Validator;
 use VkMusic\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;

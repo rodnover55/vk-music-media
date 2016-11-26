@@ -1,7 +1,17 @@
+nginx:
+  build: nginx
+  ports:
+    - "443:443"
+  links:
+    - php
+  ports:
+    - "443:443"
 php:
-  build: .
+  build: php
   ports:
     - "80:80"
+  expose:
+    - 80
   volumes:
     - .:/opt/project
   links:
