@@ -12,6 +12,6 @@ bottle.service('AuthService', AuthService);
 bottle.service('BasicService', BasicService, 'AuthService');
 bottle.service('PostService', PostService, 'AuthService');
 bottle.service('TagService', TagService, 'AuthService');
-bottle.service('PlayerService', PlayerService, 'AuthService', 'PostService');
+bottle.service('PlayerService', PlayerService, 'PostService');
 
 export default bottle;
