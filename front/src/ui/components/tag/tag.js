@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router';
 
 export default class Tag extends React.Component {
 
@@ -7,7 +8,7 @@ export default class Tag extends React.Component {
     }
 
     get tagUrl() {
-        return `/tags/${this.props.tag}`
+        return {pathname: '/tags', query: {tags: this.props.tag}};
     }
 
     render () {

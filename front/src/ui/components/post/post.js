@@ -8,9 +8,9 @@ export default class Post extends React.Component {
         return (
             <article className="post">
                 <img className="postImage" src={this.props.image} alt=""/>
-                <div className="postDescription __collapsed"></div>
+                <div className="postDescription __collapsed">{this.props.description}</div>
                 <div className="postTags">
-                    {this.props.tags.map(tag => <Tag tag={tag} />)}
+                    {this.props.tags.map((tag, index) => <Tag key={index} tag={tag} />)}
                 </div>
             </article>
         )

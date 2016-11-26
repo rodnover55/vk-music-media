@@ -32677,6 +32677,10 @@ var _postService = require('./services/post-service');
 
 var _postService2 = _interopRequireDefault(_postService);
 
+var _tagService = require('./services/tag-service');
+
+var _tagService2 = _interopRequireDefault(_tagService);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bottle = new _bottlejs2.default();
@@ -32684,10 +32688,247 @@ var bottle = new _bottlejs2.default();
 bottle.service('AuthService', _authService2.default);
 bottle.service('BasicService', _basicService2.default, 'AuthService');
 bottle.service('PostService', _postService2.default, 'AuthService');
+bottle.service('TagService', _tagService2.default, 'AuthService');
 
 exports.default = bottle;
 
-},{"./services/auth-service":533,"./services/basic-service":534,"./services/post-service":535,"bottlejs":296}],532:[function(require,module,exports){
+},{"./services/auth-service":536,"./services/basic-service":537,"./services/post-service":538,"./services/tag-service":539,"bottlejs":296}],532:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _entity = require('../lib/entity');
+
+var _entity2 = _interopRequireDefault(_entity);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PostEntity = function (_Entity) {
+    _inherits(PostEntity, _Entity);
+
+    function PostEntity() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, PostEntity);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = PostEntity.__proto__ || Object.getPrototypeOf(PostEntity)).call.apply(_ref, [this].concat(args))), _this), _this.id = 0, _this.created_at = '1970-01-01', _this.title = '', _this.image = '', _this.description = '', _this.tags = [], _this.tracks = [], _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    return PostEntity;
+}(_entity2.default);
+
+exports.default = PostEntity;
+
+},{"../lib/entity":534}],533:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CommonObject = function () {
+    function CommonObject() {
+        _classCallCheck(this, CommonObject);
+    }
+
+    _createClass(CommonObject, [{
+        key: Symbol.toPrimitive,
+        value: function value() {
+            throw new TypeError(this[Symbol.toStringTag] + ' cannot be converted to primitive');
+        }
+    }, {
+        key: Symbol.toStringTag,
+        get: function get() {
+            return 'CommonObject';
+        }
+    }], [{
+        key: 'make',
+        value: function make(constr) {
+            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+            }
+
+            return Object.seal(new (Function.prototype.bind.apply(constr, [null].concat(args)))());
+        }
+    }]);
+
+    return CommonObject;
+}();
+
+exports.default = CommonObject;
+
+},{}],534:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _commonObject = require('./common-object');
+
+var _commonObject2 = _interopRequireDefault(_commonObject);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Entity = function (_CommonObject) {
+    _inherits(Entity, _CommonObject);
+
+    function Entity() {
+        _classCallCheck(this, Entity);
+
+        return _possibleConstructorReturn(this, (Entity.__proto__ || Object.getPrototypeOf(Entity)).apply(this, arguments));
+    }
+
+    _createClass(Entity, [{
+        key: Symbol.iterator,
+        value: regeneratorRuntime.mark(function value() {
+            var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, propName;
+
+            return regeneratorRuntime.wrap(function value$(_context) {
+                while (1) {
+                    switch (_context.prev = _context.next) {
+                        case 0:
+                            _iteratorNormalCompletion = true;
+                            _didIteratorError = false;
+                            _iteratorError = undefined;
+                            _context.prev = 3;
+                            _iterator = this[Symbol.iterator]();
+
+                        case 5:
+                            if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+                                _context.next = 13;
+                                break;
+                            }
+
+                            propName = _step.value;
+
+                            if (!this.hasOwnProperty(propName)) {
+                                _context.next = 10;
+                                break;
+                            }
+
+                            _context.next = 10;
+                            return [propName, this[propName]];
+
+                        case 10:
+                            _iteratorNormalCompletion = true;
+                            _context.next = 5;
+                            break;
+
+                        case 13:
+                            _context.next = 19;
+                            break;
+
+                        case 15:
+                            _context.prev = 15;
+                            _context.t0 = _context['catch'](3);
+                            _didIteratorError = true;
+                            _iteratorError = _context.t0;
+
+                        case 19:
+                            _context.prev = 19;
+                            _context.prev = 20;
+
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+
+                        case 22:
+                            _context.prev = 22;
+
+                            if (!_didIteratorError) {
+                                _context.next = 25;
+                                break;
+                            }
+
+                            throw _iteratorError;
+
+                        case 25:
+                            return _context.finish(22);
+
+                        case 26:
+                            return _context.finish(19);
+
+                        case 27:
+                        case 'end':
+                            return _context.stop();
+                    }
+                }
+            }, value, this, [[3, 15, 19, 27], [20,, 22, 26]]);
+        })
+    }], [{
+        key: 'make',
+        value: function make(entityClass, attributes) {
+            var inst = new entityClass();
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = Object.entries(attributes)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var _step2$value = _slicedToArray(_step2.value, 2),
+                        key = _step2$value[0],
+                        _value = _step2$value[1];
+
+                    if (!inst.hasOwnProperty(key)) {
+                        throw new TypeError(entityClass.name + ' don`t have property ' + key);
+                    }
+                    inst[key] = _value;
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            return Object.freeze(inst);
+        }
+    }]);
+
+    return Entity;
+}(_commonObject2.default);
+
+exports.default = Entity;
+
+},{"./common-object":533}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32858,7 +33099,7 @@ function buildQueryString() {
 exports.get = get;
 exports.post = post;
 
-},{"nanoajax":339}],533:[function(require,module,exports){
+},{"nanoajax":339}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32982,7 +33223,7 @@ var AuthService = function () {
 
 exports.default = AuthService;
 
-},{"../lib/http":532}],534:[function(require,module,exports){
+},{"../lib/http":535}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32992,6 +33233,12 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _http = require('../lib/http');
+
+var _entity = require('../lib/entity');
+
+var _entity2 = _interopRequireDefault(_entity);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
@@ -33019,11 +33266,11 @@ var BasicService = function () {
 
             if (Array.isArray(body)) {
                 return body.map(function (elm) {
-                    return _this.constructor.entityClass.make(elm);
+                    return _entity2.default.make(_this.constructor.entityClass, elm);
                 });
             }
 
-            return this.constructor.entityClass.make(body);
+            return _entity2.default.make(this.constructor.entityClass, body);
         }
     }, {
         key: 'getAuthHeaders',
@@ -33080,9 +33327,18 @@ var BasicService = function () {
                             case 10:
                                 _context2.prev = 10;
                                 _context2.t0 = _context2['catch'](3);
+
+                                if (!(_context2.t0.statusCode !== undefined)) {
+                                    _context2.next = 14;
+                                    break;
+                                }
+
                                 throw new Error('Server respond with status code ' + _context2.t0.statusCode);
 
-                            case 13:
+                            case 14:
+                                throw _context2.t0;
+
+                            case 15:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -33137,7 +33393,7 @@ var BasicService = function () {
 
 exports.default = BasicService;
 
-},{"../lib/http":532}],535:[function(require,module,exports){
+},{"../lib/entity":534,"../lib/http":535}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33149,6 +33405,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _basicService = require('./basic-service');
 
 var _basicService2 = _interopRequireDefault(_basicService);
+
+var _postEntity = require('../entities/post-entity');
+
+var _postEntity2 = _interopRequireDefault(_postEntity);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33220,9 +33480,54 @@ var PostService = function (_BasicService) {
     return PostService;
 }(_basicService2.default);
 
+PostService.entityClass = _postEntity2.default;
 exports.default = PostService;
 
-},{"./basic-service":534}],536:[function(require,module,exports){
+},{"../entities/post-entity":532,"./basic-service":537}],539:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _basicService = require('./basic-service');
+
+var _basicService2 = _interopRequireDefault(_basicService);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var URL = '/api/tags';
+
+var TagService = function (_BasicService) {
+    _inherits(TagService, _BasicService);
+
+    function TagService() {
+        _classCallCheck(this, TagService);
+
+        return _possibleConstructorReturn(this, (TagService.__proto__ || Object.getPrototypeOf(TagService)).apply(this, arguments));
+    }
+
+    _createClass(TagService, [{
+        key: 'getTags',
+        value: function getTags() {
+            return this.get(URL);
+        }
+    }]);
+
+    return TagService;
+}(_basicService2.default);
+
+exports.default = TagService;
+
+},{"./basic-service":537}],540:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -33289,12 +33594,14 @@ var Player = function (_React$Component) {
 
 exports.default = Player;
 
-},{"react":527}],537:[function(require,module,exports){
+},{"react":527}],541:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -33358,8 +33665,8 @@ var PostList = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'postList' },
-                this.state.posts.map(function (post) {
-                    return _react2.default.createElement(_post2.default, post);
+                this.state.posts.map(function (post, index) {
+                    return _react2.default.createElement(_post2.default, _extends({ key: index }, post));
                 })
             );
         }
@@ -33370,7 +33677,7 @@ var PostList = function (_React$Component) {
 
 exports.default = PostList;
 
-},{"../../../di":531,"../post/post":538,"react":527}],538:[function(require,module,exports){
+},{"../../../di":531,"../post/post":542,"react":527}],542:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33411,12 +33718,16 @@ var Post = function (_React$Component) {
                 'article',
                 { className: 'post' },
                 _react2.default.createElement('img', { className: 'postImage', src: this.props.image, alt: '' }),
-                _react2.default.createElement('div', { className: 'postDescription __collapsed' }),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'postDescription __collapsed' },
+                    this.props.description
+                ),
                 _react2.default.createElement(
                     'div',
                     { className: 'postTags' },
-                    this.props.tags.map(function (tag) {
-                        return _react2.default.createElement(_tag2.default, { tag: tag });
+                    this.props.tags.map(function (tag, index) {
+                        return _react2.default.createElement(_tag2.default, { key: index, tag: tag });
                     })
                 )
             );
@@ -33428,7 +33739,7 @@ var Post = function (_React$Component) {
 
 exports.default = Post;
 
-},{"../tag/tag":540,"react":527}],539:[function(require,module,exports){
+},{"../tag/tag":544,"react":527}],543:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33440,6 +33751,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _di = require('../../../di');
+
+var _di2 = _interopRequireDefault(_di);
 
 var _tag = require('../tag/tag');
 
@@ -33457,26 +33772,46 @@ var TagList = function (_React$Component) {
     _inherits(TagList, _React$Component);
 
     function TagList() {
+        var _ref;
+
         _classCallCheck(this, TagList);
 
-        return _possibleConstructorReturn(this, (TagList.__proto__ || Object.getPrototypeOf(TagList)).apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        //noinspection JSUnresolvedVariable
+        var _this = _possibleConstructorReturn(this, (_ref = TagList.__proto__ || Object.getPrototypeOf(TagList)).call.apply(_ref, [this].concat(args)));
+
+        _this.state = {
+            tags: []
+        };
+        _this.tagService = _di2.default.container.TagService;
+        return _this;
     }
 
+    /** @member TagService */
+
+
     _createClass(TagList, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            this.tagService.getTags().then(function (tags) {
+                return _this2.setState({ tags: tags });
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
                 'div',
                 { className: 'tagList' },
-                this.tags.map(function (tag) {
-                    return _react2.default.createElement(_tag2.default, { tag: tag });
+                this.state.tags.map(function (tag, index) {
+                    return _react2.default.createElement(_tag2.default, { key: index, tag: tag });
                 })
             );
-        }
-    }, {
-        key: 'tags',
-        get: function get() {
-            return [];
         }
     }]);
 
@@ -33485,8 +33820,8 @@ var TagList = function (_React$Component) {
 
 exports.default = TagList;
 
-},{"../tag/tag":540,"react":527}],540:[function(require,module,exports){
-"use strict";
+},{"../../../di":531,"../tag/tag":544,"react":527}],544:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -33494,9 +33829,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33516,23 +33853,23 @@ var Tag = function (_React$Component) {
     }
 
     _createClass(Tag, [{
-        key: "render",
+        key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                Link,
-                { className: "tag", to: this.tagUrl },
+                _reactRouter.Link,
+                { className: 'tag', to: this.tagUrl },
                 this.tagName
             );
         }
     }, {
-        key: "tagName",
+        key: 'tagName',
         get: function get() {
             return this.props.tag;
         }
     }, {
-        key: "tagUrl",
+        key: 'tagUrl',
         get: function get() {
-            return "/tags/" + this.props.tag;
+            return { pathname: '/tags', query: { tags: this.props.tag } };
         }
     }]);
 
@@ -33541,7 +33878,7 @@ var Tag = function (_React$Component) {
 
 exports.default = Tag;
 
-},{"react":527}],541:[function(require,module,exports){
+},{"react":527,"react-router":496}],545:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33689,7 +34026,7 @@ var Layout = function (_React$Component) {
 
 exports.default = Layout;
 
-},{"../../di":531,"../components/player/player":536,"react":527,"react-router":496}],542:[function(require,module,exports){
+},{"../../di":531,"../components/player/player":540,"react":527,"react-router":496}],546:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33741,7 +34078,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":537,"react":527,"react-router":496}],543:[function(require,module,exports){
+},{"../components/post-list/post-list":541,"react":527,"react-router":496}],547:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33798,7 +34135,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"react":527,"react-router":496}],544:[function(require,module,exports){
+},{"react":527,"react-router":496}],548:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33855,7 +34192,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":537,"../components/tag-list/tag-list":539,"react":527,"react-router":496}],545:[function(require,module,exports){
+},{"../components/post-list/post-list":541,"../components/tag-list/tag-list":543,"react":527,"react-router":496}],549:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -33898,4 +34235,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     )
 ), document.getElementById('react-app'));
 
-},{"./pages/layout":541,"./pages/main":542,"./pages/not-found":543,"./pages/tags":544,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[545]);
+},{"./pages/layout":545,"./pages/main":546,"./pages/not-found":547,"./pages/tags":548,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[549]);

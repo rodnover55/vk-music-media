@@ -1,4 +1,5 @@
 import { get, post } from '../lib/http';
+import Entity from '../lib/entity';
 
 export default class BasicService {
 
@@ -17,10 +18,10 @@ export default class BasicService {
         }
 
         if (Array.isArray(body)) {
-            return body.map(elm => this.constructor.entityClass.make(elm))
+            return body.map(elm => Entity.make(this.constructor.entityClass, elm))
         }
 
-        return this.constructor.entityClass.make(body)
+        return Entity.make(this.constructor.entityClass, body)
     }
 
     async getAuthHeaders() {
@@ -35,7 +36,11 @@ export default class BasicService {
             const response = await get(url, query, authHeaders);
             return this.parse(response.body);
         } catch (errorResponse) {
-            throw new Error('Server respond with status code ' + errorResponse.statusCode);
+            if (errorResponse.statusCode !== undefined) {
+                throw new Error('Server respond with status code ' + errorResponse.statusCode);
+            }
+
+            throw errorResponse;
         }
     }
 
