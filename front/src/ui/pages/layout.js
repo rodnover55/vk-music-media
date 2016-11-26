@@ -24,9 +24,9 @@ export default class Layout extends React.Component {
     {
         this.setState({refreshDisabled: true});
         try {
-            const response = await this.postService.refreshPosts();
+            await this.postService.refreshPosts();
         } catch (e) {
-            alert(e.message);
+            alert(e.body.message);
         } finally {
             this.setState({refreshDisabled: false});
         }

@@ -32681,6 +32681,10 @@ var _tagService = require('./services/tag-service');
 
 var _tagService2 = _interopRequireDefault(_tagService);
 
+var _playerService = require('./services/player-service');
+
+var _playerService2 = _interopRequireDefault(_playerService);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var bottle = new _bottlejs2.default();
@@ -32689,10 +32693,11 @@ bottle.service('AuthService', _authService2.default);
 bottle.service('BasicService', _basicService2.default, 'AuthService');
 bottle.service('PostService', _postService2.default, 'AuthService');
 bottle.service('TagService', _tagService2.default, 'AuthService');
+bottle.service('PlayerService', _playerService2.default, 'PostService');
 
 exports.default = bottle;
 
-},{"./services/auth-service":536,"./services/basic-service":537,"./services/post-service":538,"./services/tag-service":539,"bottlejs":296}],532:[function(require,module,exports){
+},{"./services/auth-service":536,"./services/basic-service":537,"./services/player-service":538,"./services/post-service":539,"./services/tag-service":540,"bottlejs":296}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32963,15 +32968,12 @@ var get = function () {
                                 url: url,
                                 headers: headers
                             }, function (statusCode, body) {
-
-                                if (statusCode === 204) {
-                                    return { statusCode: statusCode, body: null };
-                                }
+                                body = body || 'null';
 
                                 try {
                                     body = JSON.parse(body);
                                 } catch (e) {
-                                    throw new Error('Response body is not a valid JSON');
+                                    body = { message: body };
                                 }
 
                                 if (statusCode >= 400 || statusCode === 0) {
@@ -33019,18 +33021,13 @@ var post = function () {
                                 url: url,
                                 body: JSON.stringify(body),
                                 headers: headers
-                            }, function (statusCode) {
-                                var body = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-
-                                if (statusCode === 204) {
-                                    return resolve({ statusCode: statusCode, body: null });
-                                }
+                            }, function (statusCode, body) {
+                                body = body || null;
 
                                 try {
                                     body = JSON.parse(body);
                                 } catch (e) {
-                                    throw new Error('Response body is not a valid JSON');
+                                    body = { message: body };
                                 }
 
                                 if (statusCode >= 400 || statusCode === 0) {
@@ -33402,6 +33399,127 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CALLBACKS = Symbol('CALLBACKS');
+var CURRENT_POST = Symbol('CURRENT_POST');
+
+var PlayerService = function () {
+
+    /** @member PostService */
+    function PlayerService(postService) {
+        _classCallCheck(this, PlayerService);
+
+        this.postService = postService;
+        this[CALLBACKS] = new Set();
+        this[CURRENT_POST] = null;
+    }
+
+    /** @member PostEntity */
+
+
+    _createClass(PlayerService, [{
+        key: 'removeCallback',
+        value: function removeCallback(callback) {
+            this[CALLBACKS].delete(callback);
+        }
+    }, {
+        key: 'setCallback',
+        value: function setCallback(callback) {
+            this[CALLBACKS].add(callback);
+        }
+    }, {
+        key: 'playPost',
+        value: function () {
+            var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(id) {
+                var post, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, cb;
+
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                _context.next = 2;
+                                return this.postService.getById(id);
+
+                            case 2:
+                                post = _context.sent;
+
+                                this[CURRENT_POST] = post;
+
+                                _iteratorNormalCompletion = true;
+                                _didIteratorError = false;
+                                _iteratorError = undefined;
+                                _context.prev = 7;
+                                for (_iterator = this[CALLBACKS][Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                    cb = _step.value;
+
+                                    cb(post);
+                                }
+                                _context.next = 15;
+                                break;
+
+                            case 11:
+                                _context.prev = 11;
+                                _context.t0 = _context['catch'](7);
+                                _didIteratorError = true;
+                                _iteratorError = _context.t0;
+
+                            case 15:
+                                _context.prev = 15;
+                                _context.prev = 16;
+
+                                if (!_iteratorNormalCompletion && _iterator.return) {
+                                    _iterator.return();
+                                }
+
+                            case 18:
+                                _context.prev = 18;
+
+                                if (!_didIteratorError) {
+                                    _context.next = 21;
+                                    break;
+                                }
+
+                                throw _iteratorError;
+
+                            case 21:
+                                return _context.finish(18);
+
+                            case 22:
+                                return _context.finish(15);
+
+                            case 23:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this, [[7, 11, 15, 23], [16,, 18, 22]]);
+            }));
+
+            function playPost(_x) {
+                return _ref.apply(this, arguments);
+            }
+
+            return playPost;
+        }()
+    }]);
+
+    return PlayerService;
+}();
+
+exports.default = PlayerService;
+
+},{}],539:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _basicService = require('./basic-service');
 
 var _basicService2 = _interopRequireDefault(_basicService);
@@ -33435,6 +33553,11 @@ var PostService = function (_BasicService) {
         key: 'getRecentPosts',
         value: function getRecentPosts() {
             return this.get(URL);
+        }
+    }, {
+        key: 'getById',
+        value: function getById(id) {
+            return this.get(URL + '/' + id);
         }
     }, {
         key: 'refreshPosts',
@@ -33483,7 +33606,7 @@ var PostService = function (_BasicService) {
 PostService.entityClass = _postEntity2.default;
 exports.default = PostService;
 
-},{"../entities/post-entity":532,"./basic-service":537}],539:[function(require,module,exports){
+},{"../entities/post-entity":532,"./basic-service":537}],540:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33527,8 +33650,8 @@ var TagService = function (_BasicService) {
 
 exports.default = TagService;
 
-},{"./basic-service":537}],540:[function(require,module,exports){
-"use strict";
+},{"./basic-service":537}],541:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -33536,9 +33659,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _di = require('../../../di');
+
+var _di2 = _interopRequireDefault(_di);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33552,38 +33679,92 @@ var Player = function (_React$Component) {
     _inherits(Player, _React$Component);
 
     function Player() {
+        var _ref;
+
         _classCallCheck(this, Player);
 
-        return _possibleConstructorReturn(this, (Player.__proto__ || Object.getPrototypeOf(Player)).apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        //noinspection JSUnresolvedVariable
+        var _this = _possibleConstructorReturn(this, (_ref = Player.__proto__ || Object.getPrototypeOf(Player)).call.apply(_ref, [this].concat(args)));
+
+        _this.state = {
+            post: null,
+            currentTrack: null
+        };
+        _this.playerService = _di2.default.container.PlayerService;
+        _this.playPost = _this.playPost.bind(_this);
+        return _this;
     }
 
+    /** @member PlayerService */
+
+
     _createClass(Player, [{
-        key: "render",
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.playerService.setCallback(this.playPost);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            this.playerService.removeCallback(this.playPost);
+        }
+
+        /**
+         *
+         * @param post {PostEntity}
+         */
+
+    }, {
+        key: 'playPost',
+        value: function playPost(post) {
+            this.setState({ post: post });
+        }
+    }, {
+        key: 'currentPlaylist',
+        value: function currentPlaylist() {
+            if (this.state.post === null) {
+                return '';
+            }
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                '\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u043B\u0435\u0439\u043B\u0438\u0441\u0442: ',
+                this.state.post.title
+            );
+        }
+    }, {
+        key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                "div",
-                { className: "player" },
+                'div',
+                { className: 'player' },
+                this.currentPlaylist(),
                 _react2.default.createElement(
-                    "button",
-                    { className: "playerButton __prev" },
-                    "\u2190"
+                    'button',
+                    { className: 'playerButton __prev' },
+                    '\u2190'
                 ),
                 _react2.default.createElement(
-                    "button",
-                    { className: "playerButton __play" },
-                    "Play"
+                    'button',
+                    { className: 'playerButton __play' },
+                    'Play'
                 ),
                 _react2.default.createElement(
-                    "button",
-                    { className: "playerButton __next" },
-                    "\u2192"
+                    'button',
+                    { className: 'playerButton __next' },
+                    '\u2192'
                 ),
-                _react2.default.createElement("div", { className: "playerProgress" }),
-                _react2.default.createElement("div", { className: "playerSound" }),
+                _react2.default.createElement('div', { className: 'playerProgress' }),
+                _react2.default.createElement('div', { className: 'playerSound' }),
                 _react2.default.createElement(
-                    "button",
-                    { className: "playerPlaylist" },
-                    "show playlist"
+                    'button',
+                    { className: 'playerPlaylist' },
+                    'show playlist'
                 )
             );
         }
@@ -33594,7 +33775,7 @@ var Player = function (_React$Component) {
 
 exports.default = Player;
 
-},{"react":527}],541:[function(require,module,exports){
+},{"../../../di":531,"react":527}],542:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33677,7 +33858,7 @@ var PostList = function (_React$Component) {
 
 exports.default = PostList;
 
-},{"../../../di":531,"../post/post":542,"react":527}],542:[function(require,module,exports){
+},{"../../../di":531,"../post/post":543,"react":527}],543:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33689,6 +33870,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _di = require('../../../di');
+
+var _di2 = _interopRequireDefault(_di);
 
 var _tag = require('../tag/tag');
 
@@ -33706,14 +33891,34 @@ var Post = function (_React$Component) {
     _inherits(Post, _React$Component);
 
     function Post() {
+        var _ref;
+
         _classCallCheck(this, Post);
 
-        return _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        //noinspection JSUnresolvedVariable
+        var _this = _possibleConstructorReturn(this, (_ref = Post.__proto__ || Object.getPrototypeOf(Post)).call.apply(_ref, [this].concat(args)));
+
+        _this.playerService = _di2.default.container.PlayerService;
+        return _this;
     }
 
+    /** @member PlayerService */
+
+
     _createClass(Post, [{
+        key: 'onPlayClick',
+        value: function onPlayClick(id) {
+            this.playerService.playPost(id);
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 'article',
                 { className: 'post' },
@@ -33729,6 +33934,13 @@ var Post = function (_React$Component) {
                     this.props.tags.map(function (tag, index) {
                         return _react2.default.createElement(_tag2.default, { key: index, tag: tag });
                     })
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { onClick: function onClick() {
+                            return _this2.onPlayClick(_this2.props.id);
+                        }, className: 'postPlay' },
+                    '\u0412\u043E\u0441\u043F\u0440\u043E\u0438\u0437\u0432\u0435\u0441\u0442\u0438 \u043F\u043E\u0441\u0442'
                 )
             );
         }
@@ -33739,7 +33951,7 @@ var Post = function (_React$Component) {
 
 exports.default = Post;
 
-},{"../tag/tag":544,"react":527}],543:[function(require,module,exports){
+},{"../../../di":531,"../tag/tag":545,"react":527}],544:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33820,7 +34032,7 @@ var TagList = function (_React$Component) {
 
 exports.default = TagList;
 
-},{"../../../di":531,"../tag/tag":544,"react":527}],544:[function(require,module,exports){
+},{"../../../di":531,"../tag/tag":545,"react":527}],545:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33878,7 +34090,7 @@ var Tag = function (_React$Component) {
 
 exports.default = Tag;
 
-},{"react":527,"react-router":496}],545:[function(require,module,exports){
+},{"react":527,"react-router":496}],546:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33940,7 +34152,6 @@ var Layout = function (_React$Component) {
         key: 'fetchPosts',
         value: function () {
             var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-                var response;
                 return regeneratorRuntime.wrap(function _callee$(_context) {
                     while (1) {
                         switch (_context.prev = _context.next) {
@@ -33951,28 +34162,27 @@ var Layout = function (_React$Component) {
                                 return this.postService.refreshPosts();
 
                             case 4:
-                                response = _context.sent;
-                                _context.next = 10;
+                                _context.next = 9;
                                 break;
 
-                            case 7:
-                                _context.prev = 7;
+                            case 6:
+                                _context.prev = 6;
                                 _context.t0 = _context['catch'](1);
 
-                                alert(_context.t0.message);
+                                alert(_context.t0.body.message);
 
-                            case 10:
-                                _context.prev = 10;
+                            case 9:
+                                _context.prev = 9;
 
                                 this.setState({ refreshDisabled: false });
-                                return _context.finish(10);
+                                return _context.finish(9);
 
-                            case 13:
+                            case 12:
                             case 'end':
                                 return _context.stop();
                         }
                     }
-                }, _callee, this, [[1, 7, 10, 13]]);
+                }, _callee, this, [[1, 6, 9, 12]]);
             }));
 
             function fetchPosts() {
@@ -34026,7 +34236,7 @@ var Layout = function (_React$Component) {
 
 exports.default = Layout;
 
-},{"../../di":531,"../components/player/player":540,"react":527,"react-router":496}],546:[function(require,module,exports){
+},{"../../di":531,"../components/player/player":541,"react":527,"react-router":496}],547:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34078,7 +34288,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":541,"react":527,"react-router":496}],547:[function(require,module,exports){
+},{"../components/post-list/post-list":542,"react":527,"react-router":496}],548:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34135,7 +34345,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"react":527,"react-router":496}],548:[function(require,module,exports){
+},{"react":527,"react-router":496}],549:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34192,7 +34402,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":541,"../components/tag-list/tag-list":543,"react":527,"react-router":496}],549:[function(require,module,exports){
+},{"../components/post-list/post-list":542,"../components/tag-list/tag-list":544,"react":527,"react-router":496}],550:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -34235,4 +34445,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     )
 ), document.getElementById('react-app'));
 
-},{"./pages/layout":545,"./pages/main":546,"./pages/not-found":547,"./pages/tags":548,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[549]);
+},{"./pages/layout":546,"./pages/main":547,"./pages/not-found":548,"./pages/tags":549,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[550]);

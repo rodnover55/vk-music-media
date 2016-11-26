@@ -48,7 +48,7 @@ app.get('/api/tags', (req, res) => {
 });
 
 app.post('/api/posts-refresh', (req, res) => {
-    res.sendStatus(204);
+    res.sendStatus(500);
     res.json(null);
 });
 

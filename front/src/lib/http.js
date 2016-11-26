@@ -27,15 +27,12 @@ async function get(url, params = {}, headers = {}) {
             url,
             headers
         }, (statusCode, body) => {
-
-            if (statusCode === 204) {
-                return {statusCode, body: null}
-            }
+            body = body || 'null';
 
             try {
                 body = JSON.parse(body);
             } catch (e) {
-                throw new Error('Response body is not a valid JSON');
+                body = {message: body}
             }
 
             if (statusCode >= 400 || statusCode === 0) {
@@ -61,16 +58,13 @@ async function post(url, body = {}, params = {}, headers = {}) {
             url,
             body: JSON.stringify(body),
             headers
-        }, (statusCode, body = '') => {
-
-            if (statusCode === 204) {
-                return resolve({statusCode, body: null});
-            }
+        }, (statusCode, body) => {
+            body = body || null;
 
             try {
                 body = JSON.parse(body);
             } catch (e) {
-                throw new Error('Response body is not a valid JSON');
+                body = {message: body}
             }
 
             if (statusCode >= 400 || statusCode === 0) {

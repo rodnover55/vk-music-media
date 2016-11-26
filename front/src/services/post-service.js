@@ -11,6 +11,10 @@ export default class PostService extends BasicService {
         return this.get(URL);
     }
 
+    getById(id) {
+        return this.get(URL + '/' + id);
+    }
+
     async refreshPosts() {
         const response = await this.post(URL + '-refresh');
 
