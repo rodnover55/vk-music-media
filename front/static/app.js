@@ -34357,7 +34357,7 @@ var TrackEntity = function (_Entity) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TrackEntity.__proto__ || Object.getPrototypeOf(TrackEntity)).call.apply(_ref, [this].concat(args))), _this), _this.id = 0, _this.title = '', _this.artist = '', _this.link = '', _temp), _possibleConstructorReturn(_this, _ret);
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TrackEntity.__proto__ || Object.getPrototypeOf(TrackEntity)).call.apply(_ref, [this].concat(args))), _this), _this.id = 0, _this.aid = 0, _this.owner_id = 0, _this.title = '', _this.artist = '', _this.link = '', _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     return TrackEntity;
@@ -34826,7 +34826,7 @@ var AuthService = function () {
                                 response = _context.sent;
 
                                 this[TOKEN] = response.body.token;
-                                return _context.abrupt('return', response.token);
+                                return _context.abrupt('return', response.body.token);
 
                             case 7:
                             case 'end':
@@ -34917,9 +34917,13 @@ var BasicService = function () {
 
                             case 2:
                                 token = _context.sent;
+
+
+                                console.log(token);
+
                                 return _context.abrupt('return', { 'X-Token': token });
 
-                            case 4:
+                            case 5:
                             case 'end':
                                 return _context.stop();
                         }
@@ -35033,6 +35037,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _http = require('../lib/http');
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35040,6 +35046,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var POST_CALLBACKS = Symbol('CALLBACKS');
 var TRACK_CALLBACKS = Symbol('TRACK_CALLBACKS');
 var CURRENT_POST = Symbol('CURRENT_POST');
+
+var VK_URL = 'https://api.vk.com/method/audio.getById';
 
 var PlayerService = function () {
 
@@ -35149,6 +35157,44 @@ var PlayerService = function () {
             }
 
             return playPost;
+        }()
+
+        /**
+         * @param track {TrackEntity}
+         */
+
+    }, {
+        key: 'getMediaUrl',
+        value: function () {
+            var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(track) {
+                var response;
+                return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                _context2.next = 2;
+                                return (0, _http.post)(VK_URL, {
+                                    audios: track.owner_id + '_' + track.aid,
+                                    version: '5.60'
+                                });
+
+                            case 2:
+                                response = _context2.sent;
+                                return _context2.abrupt('return', response.body.url);
+
+                            case 4:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this);
+            }));
+
+            function getMediaUrl(_x2) {
+                return _ref2.apply(this, arguments);
+            }
+
+            return getMediaUrl;
         }()
     }, {
         key: 'playTrack',
@@ -35261,7 +35307,7 @@ var PlayerService = function () {
 
 exports.default = PlayerService;
 
-},{}],552:[function(require,module,exports){
+},{"../lib/http":548}],552:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35429,6 +35475,8 @@ var _reactPlayer2 = _interopRequireDefault(_reactPlayer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -35483,12 +35531,39 @@ var Player = function (_React$Component) {
         }
     }, {
         key: 'playTrack',
-        value: function playTrack(currentTrack) {
-            this.setState({
-                currentTrack: currentTrack,
-                playerOptions: _extends({}, this.state.playerOptions, { playing: true })
-            });
-        }
+        value: function () {
+            var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee(currentTrack) {
+                var url;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                _context.next = 2;
+                                return this.playerService.getMediaUrl(currentTrack);
+
+                            case 2:
+                                url = _context.sent;
+
+
+                                this.setState({
+                                    currentTrack: currentTrack,
+                                    playerOptions: _extends({}, this.state.playerOptions, { playing: true, url: url })
+                                });
+
+                            case 4:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function playTrack(_x) {
+                return _ref2.apply(this, arguments);
+            }
+
+            return playTrack;
+        }()
 
         /**
          * @param post {PostEntity}
@@ -35552,7 +35627,7 @@ var Player = function (_React$Component) {
                 return '';
             }
 
-            return _react2.default.createElement(_reactPlayer2.default, _extends({ url: this.state.currentTrack.link }, this.state.playerOptions));
+            return _react2.default.createElement(_reactPlayer2.default, this.state.playerOptions);
         }
     }, {
         key: 'togglePlaylist',

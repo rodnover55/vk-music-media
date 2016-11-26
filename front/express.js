@@ -28,10 +28,11 @@ app.get('/api/posts', (req, res) => {
 function* makeTracks(times) {
     for (let i = 0; i < times; i += 1) {
         yield {
-            id: i + 1,
+            id: 456240450,
+            owner_id: 2000120414,
             artist: 'Super group',
             title: 'Track no ' + (i + 1),
-            link: 'https://psv4.vk.me/c4763/u5620198/audios/31d1027c14a3.mp3?salt=' + i
+            link: ''
         };
     }
 }
@@ -61,6 +62,6 @@ app.get('/*', (req, res) => {
     res.render('index.html');
 });
 
-app.listen(3000, () => {
+app.listen(8080, () => {
     console.log('Example app listening on port 3000!');
 });

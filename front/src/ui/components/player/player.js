@@ -39,10 +39,15 @@ export default class Player extends React.Component {
         this.playerService.removeTrackCallback(this.playTrack);
     }
 
-    playTrack(currentTrack) {
+    async playTrack(currentTrack) {
+        const url = await this.playerService.getMediaUrl(currentTrack);
+
         this.setState({
             currentTrack,
-            playerOptions: {...this.state.playerOptions, ...{playing: true}}
+            playerOptions: {
+                ...this.state.playerOptions,
+                ...{playing: true, url: url}
+            }
         });
     }
 
@@ -87,7 +92,7 @@ export default class Player extends React.Component {
             return '';
         }
 
-        return <ReactPlayer url={this.state.currentTrack.link} {...this.state.playerOptions} />
+        return <ReactPlayer {...this.state.playerOptions} />
     }
 
     togglePlaylist() {

@@ -1,6 +1,10 @@
+import { post } from '../lib/http';
+
 const POST_CALLBACKS = Symbol('CALLBACKS');
 const TRACK_CALLBACKS = Symbol('TRACK_CALLBACKS');
 const CURRENT_POST = Symbol('CURRENT_POST');
+
+const VK_URL = 'https://api.vk.com/method/audio.getById';
 
 export default class PlayerService {
 
@@ -40,6 +44,18 @@ export default class PlayerService {
         for (const cb of this[POST_CALLBACKS]) {
             cb(post);
         }
+    }
+
+    /**
+     * @param track {TrackEntity}
+     */
+    async getMediaUrl(track) {
+        const response = await post(VK_URL, {
+            audios: `${track.owner_id}_${track.aid}`,
+            version: '5.60'
+        });
+
+        return response.body.url;
     }
 
     playTrack(desireTrack) {
