@@ -8,7 +8,15 @@ export default class Entity extends CommonObject {
             if (!inst.hasOwnProperty(key)) {
                 throw new TypeError(entityClass.name + ' don`t have property ' + key)
             }
-            inst[key] = value;
+
+            const parsers = entityClass.parsers || {};
+
+            if (typeof parsers[key] === 'function') {
+                inst[key] = parsers[key](value);
+            } else {
+                inst[key] = value;
+            }
+
         }
 
         return Object.freeze(inst);

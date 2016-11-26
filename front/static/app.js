@@ -32697,7 +32697,7 @@ bottle.service('PlayerService', _playerService2.default, 'PostService');
 
 exports.default = bottle;
 
-},{"./services/auth-service":536,"./services/basic-service":537,"./services/player-service":538,"./services/post-service":539,"./services/tag-service":540,"bottlejs":296}],532:[function(require,module,exports){
+},{"./services/auth-service":537,"./services/basic-service":538,"./services/player-service":539,"./services/post-service":540,"./services/tag-service":541,"bottlejs":296}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32707,6 +32707,10 @@ Object.defineProperty(exports, "__esModule", {
 var _entity = require('../lib/entity');
 
 var _entity2 = _interopRequireDefault(_entity);
+
+var _trackEntity = require('./track-entity');
+
+var _trackEntity2 = _interopRequireDefault(_trackEntity);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32736,9 +32740,57 @@ var PostEntity = function (_Entity) {
     return PostEntity;
 }(_entity2.default);
 
+PostEntity.parsers = {
+    tracks: function tracks(list) {
+        return list.map(function (item) {
+            return _entity2.default.make(_trackEntity2.default, item);
+        });
+    }
+};
 exports.default = PostEntity;
 
-},{"../lib/entity":534}],533:[function(require,module,exports){
+},{"../lib/entity":535,"./track-entity":533}],533:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _entity = require('../lib/entity');
+
+var _entity2 = _interopRequireDefault(_entity);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TrackEntity = function (_Entity) {
+    _inherits(TrackEntity, _Entity);
+
+    function TrackEntity() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, TrackEntity);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TrackEntity.__proto__ || Object.getPrototypeOf(TrackEntity)).call.apply(_ref, [this].concat(args))), _this), _this.id = 0, _this.title = '', _this.artist = '', _this.link = '', _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    return TrackEntity;
+}(_entity2.default);
+
+exports.default = TrackEntity;
+
+},{"../lib/entity":535}],534:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32780,7 +32832,7 @@ var CommonObject = function () {
 
 exports.default = CommonObject;
 
-},{}],534:[function(require,module,exports){
+},{}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32907,7 +32959,14 @@ var Entity = function (_CommonObject) {
                     if (!inst.hasOwnProperty(key)) {
                         throw new TypeError(entityClass.name + ' don`t have property ' + key);
                     }
-                    inst[key] = _value;
+
+                    var parsers = entityClass.parsers || {};
+
+                    if (typeof parsers[key] === 'function') {
+                        inst[key] = parsers[key](_value);
+                    } else {
+                        inst[key] = _value;
+                    }
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -32933,7 +32992,7 @@ var Entity = function (_CommonObject) {
 
 exports.default = Entity;
 
-},{"./common-object":533}],535:[function(require,module,exports){
+},{"./common-object":534}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33096,7 +33155,7 @@ function buildQueryString() {
 exports.get = get;
 exports.post = post;
 
-},{"nanoajax":339}],536:[function(require,module,exports){
+},{"nanoajax":339}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33220,7 +33279,7 @@ var AuthService = function () {
 
 exports.default = AuthService;
 
-},{"../lib/http":535}],537:[function(require,module,exports){
+},{"../lib/http":536}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33390,7 +33449,7 @@ var BasicService = function () {
 
 exports.default = BasicService;
 
-},{"../lib/entity":534,"../lib/http":535}],538:[function(require,module,exports){
+},{"../lib/entity":535,"../lib/http":536}],539:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33511,7 +33570,7 @@ var PlayerService = function () {
 
 exports.default = PlayerService;
 
-},{}],539:[function(require,module,exports){
+},{}],540:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33606,7 +33665,7 @@ var PostService = function (_BasicService) {
 PostService.entityClass = _postEntity2.default;
 exports.default = PostService;
 
-},{"../entities/post-entity":532,"./basic-service":537}],540:[function(require,module,exports){
+},{"../entities/post-entity":532,"./basic-service":538}],541:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33650,7 +33709,7 @@ var TagService = function (_BasicService) {
 
 exports.default = TagService;
 
-},{"./basic-service":537}],541:[function(require,module,exports){
+},{"./basic-service":538}],542:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33775,7 +33834,7 @@ var Player = function (_React$Component) {
 
 exports.default = Player;
 
-},{"../../../di":531,"react":527}],542:[function(require,module,exports){
+},{"../../../di":531,"react":527}],543:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33858,7 +33917,7 @@ var PostList = function (_React$Component) {
 
 exports.default = PostList;
 
-},{"../../../di":531,"../post/post":543,"react":527}],543:[function(require,module,exports){
+},{"../../../di":531,"../post/post":544,"react":527}],544:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33951,7 +34010,7 @@ var Post = function (_React$Component) {
 
 exports.default = Post;
 
-},{"../../../di":531,"../tag/tag":545,"react":527}],544:[function(require,module,exports){
+},{"../../../di":531,"../tag/tag":546,"react":527}],545:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34032,7 +34091,7 @@ var TagList = function (_React$Component) {
 
 exports.default = TagList;
 
-},{"../../../di":531,"../tag/tag":545,"react":527}],545:[function(require,module,exports){
+},{"../../../di":531,"../tag/tag":546,"react":527}],546:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34090,7 +34149,7 @@ var Tag = function (_React$Component) {
 
 exports.default = Tag;
 
-},{"react":527,"react-router":496}],546:[function(require,module,exports){
+},{"react":527,"react-router":496}],547:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34236,7 +34295,7 @@ var Layout = function (_React$Component) {
 
 exports.default = Layout;
 
-},{"../../di":531,"../components/player/player":541,"react":527,"react-router":496}],547:[function(require,module,exports){
+},{"../../di":531,"../components/player/player":542,"react":527,"react-router":496}],548:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34288,7 +34347,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":542,"react":527,"react-router":496}],548:[function(require,module,exports){
+},{"../components/post-list/post-list":543,"react":527,"react-router":496}],549:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34345,7 +34404,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"react":527,"react-router":496}],549:[function(require,module,exports){
+},{"react":527,"react-router":496}],550:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34402,7 +34461,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":542,"../components/tag-list/tag-list":544,"react":527,"react-router":496}],550:[function(require,module,exports){
+},{"../components/post-list/post-list":543,"../components/tag-list/tag-list":545,"react":527,"react-router":496}],551:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -34445,4 +34504,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     )
 ), document.getElementById('react-app'));
 
-},{"./pages/layout":546,"./pages/main":547,"./pages/not-found":548,"./pages/tags":549,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[550]);
+},{"./pages/layout":547,"./pages/main":548,"./pages/not-found":549,"./pages/tags":550,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[551]);
