@@ -35888,15 +35888,12 @@ var Post = function (_React$Component) {
                     { className: 'postTitle' },
                     this.props.title
                 ),
-                _react2.default.createElement(
-                    'div',
-                    {
-                        onClick: function onClick() {
-                            return _this2.expand();
-                        },
-                        className: this.state.collapsed ? 'postDescription __collapsed' : 'postDescription' },
-                    this.props.description
-                ),
+                _react2.default.createElement('div', {
+                    onClick: function onClick() {
+                        return _this2.expand();
+                    },
+                    className: this.state.collapsed ? 'postDescription __collapsed' : 'postDescription',
+                    dangerouslySetInnerHTML: { __html: this.props.description } }),
                 _react2.default.createElement(
                     'div',
                     { className: 'postTags' },

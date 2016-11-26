@@ -38,8 +38,8 @@ export default class Post extends React.Component {
                 <h4 className="postTitle">{this.props.title}</h4>
                 <div
                     onClick={()=>this.expand()}
-                    className={this.state.collapsed ? 'postDescription __collapsed' : 'postDescription'}>
-                    {this.props.description}
+                    className={this.state.collapsed ? 'postDescription __collapsed' : 'postDescription'}
+                    dangerouslySetInnerHTML={{__html: this.props.description}}>
                 </div>
                 <div className="postTags">
                     {this.props.tags.map((tag, index) => <Tag key={index} tag={tag} />)}
