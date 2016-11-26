@@ -49,7 +49,7 @@ export default class PlayerService {
      */
     getMediaUrl(track) {
         return new Promise((resolve, reject) => {
-            VK.api('audio.getById', {audios: track.owner_id + '+' + track.aid}, (data) => {
+            VK.api('audio.getById', {audios: track.owner_id + '_' + track.aid}, (data) => {
                 console.log(data);
                 resolve(data.response[0].url);
             });
