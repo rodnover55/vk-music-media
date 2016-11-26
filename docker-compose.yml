@@ -6,6 +6,7 @@ php:
     - .:/opt/project
   links:
     - db
+  container_name: vkmusik_php
 db:
   image: postgres
   ports:
