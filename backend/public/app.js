@@ -35158,9 +35158,9 @@ var PlayerService = function () {
         key: 'getMediaUrl',
         value: function getMediaUrl(track) {
             return new Promise(function (resolve, reject) {
-                VK.api('audio.getById', { audios: track.owner_id + '+' + track.aid }, function (data) {
+                VK.api('audio.getById', { audios: track.owner_id + '_' + track.aid }, function (data) {
                     console.log(data);
-                    data.response[0];
+                    resolve(data.response[0].url);
                 });
             });
         }
