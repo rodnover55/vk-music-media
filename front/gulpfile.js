@@ -8,7 +8,9 @@ const source = require('vinyl-source-stream');
 gulp.task('scripts', () => {
     //noinspection JSUnresolvedFunction
     browserify({
-        entries: './src/ui/router.js',
+        entries: [
+            './src/ui/router.js'
+        ],
         transform: [babelify.configure()]
     })
         .bundle()
