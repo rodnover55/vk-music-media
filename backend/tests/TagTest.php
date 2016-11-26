@@ -13,7 +13,7 @@ class TagTest extends TestCase
 {
     use DatabaseTruncate;
 
-    public function testGetAll(Request $request) {
+    public function testGetAll() {
         $objects = $this->loadYmlFixture(['tag.yml', 'token.yml']);
 
         $this->auth($objects['token']->token)->getJson('/api/tags');
@@ -22,7 +22,11 @@ class TagTest extends TestCase
 
         $json = $this->decodeResponseJson();
 
-        $this->assertEquals([$objects['tag']->tag], $json);
+        $this->assertEquals([
+            $objects['tag']->tag,
+            $objects['tag-2']->tag,
+            $objects['tag-3']->tag
+        ], $json);
     }
 
     public function testGetByQuery() {
