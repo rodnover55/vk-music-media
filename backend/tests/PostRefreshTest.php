@@ -2,8 +2,11 @@
 
 namespace VkMusic\Tests;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use VkMusic\Http\Controllers\PostsRefreshController;
+use VkMusic\Models\Post;
+use VkMusic\Models\Tag;
 use VkMusic\Service\VkApi;
 use VkMusic\Tests\Support\DatabaseTruncate;
 use DateTime;
@@ -52,14 +55,20 @@ class PostRefreshTest extends TestCase
 
         $controller->savePost($post);
 
-        $this->seeInDatabase('posts', [
+        /** @var Post $post */
+        $post = Post::with(['tags'])->where([
             'pid' => $post['id'],
             'created_at' => (new DateTime())->setTimestamp($post['date']),
             'title' => $controller->getTitle($post),
             'image' => $post['attachment']['photo']['src'] ?? null,
             'description' => $post['text'],
             'group_id' => -1 * $post['from_id']
-        ]);
+        ])->first();
+
+        $tags = $controller->getTags($post['text']);
+
+        $this->assertEquals($tags, $post->tags);
+
     }
 
     public function testDontSaveExits() {
@@ -98,5 +107,45 @@ class PostRefreshTest extends TestCase
             'pid' => $post['id'],
             'group_id' => $post['from_id']
         ]);
+    }
+
+    /**
+     * @dataProvider tagsProvider
+     * @param array $tags
+     * @param string $text
+     */
+    public function testGetTags(array $tags, string $text) {
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $actual = $controller->getTags($text);
+
+        $this->assertEquals($tags, array_pluck($actual, 'tag'));
+
+        foreach ($actual as $item) {
+            $this->seeInDatabase('tags', $item->attributesToArray());
+        }
+    }
+
+    public function tagsProvider() {
+        return [
+            'base' => [
+                ['abc', '1234', 'abc_1234'],
+                "qwere #abc \n #1234 qdqwfwefergg adqwdweff #abc_1234"
+            ]
+        ];
+    }
+
+    public function testGetTagDontSaveExists() {
+        $objects = $this->loadYmlFixture('tag.yml');
+
+        /** @var Tag $tag */
+        $tag = $objects['tag'];
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $actual = $controller->getTags("#{$tag->tag}");
+
+        $this->assertEquals([$tag->toArray()], Collection::make($actual)->toArray());
     }
 }
