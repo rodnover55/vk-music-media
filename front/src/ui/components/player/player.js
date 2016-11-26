@@ -41,15 +41,17 @@ export default class Player extends React.Component {
     }
 
     async playTrack(currentTrack) {
-        const url = await this.playerService.getMediaUrl(currentTrack);
+        if (this.hasTracks()) {
+            const url = await this.playerService.getMediaUrl(currentTrack);
 
-        this.setState({
-            currentTrack,
-            playerOptions: {
-                ...this.state.playerOptions,
-                ...{playing: true, url: url}
-            }
-        });
+            this.setState({
+                currentTrack,
+                playerOptions: {
+                    ...this.state.playerOptions,
+                    ...{playing: true, url: url}
+                }
+            });
+        }
     }
 
     /**
@@ -58,6 +60,10 @@ export default class Player extends React.Component {
     playPost(post) {
         this.setState({post});
         this.playerService.playTrack(post.tracks[0])
+    }
+
+    hasTracks() {
+        return this.state.post !== null && this.state.post.tracks.length > 0;
     }
 
     currentTrack() {
@@ -140,17 +146,17 @@ export default class Player extends React.Component {
                 {this.player()}
                 <div className="playerControls">
                     <button
-                        disabled={this.state.currentTrack === null}
+                        disabled={!this.hasTracks()}
                         onClick={()=>this.playPrev()}
                         className="playerButton __prev">
                     </button>
                     <button
-                        disabled={this.state.currentTrack === null}
+                        disabled={!this.hasTracks()}
                         onClick={()=>this.playPause()}
                         className={this.state.playerOptions.playing ? 'playerButton __pause' : 'playerButton __play'}>
                     </button>
                     <button
-                        disabled={this.state.currentTrack === null}
+                        disabled={!this.hasTracks()}
                         onClick={()=>this.playNext()}
                         className="playerButton __next">
                     </button>
@@ -163,7 +169,7 @@ export default class Player extends React.Component {
                 </div>
                 <div className="playerSound"></div>
                 <button
-                    disabled={this.state.currentTrack === null}
+                    disabled={!this.hasTracks()}
                     onClick={()=>this.togglePlaylist()}
                     className="playerButton __showList">
                 </button>

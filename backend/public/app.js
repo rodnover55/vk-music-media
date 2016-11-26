@@ -35509,10 +35509,15 @@ var Player = function (_React$Component) {
                     while (1) {
                         switch (_context.prev = _context.next) {
                             case 0:
-                                _context.next = 2;
+                                if (!this.hasTracks()) {
+                                    _context.next = 5;
+                                    break;
+                                }
+
+                                _context.next = 3;
                                 return this.playerService.getMediaUrl(currentTrack);
 
-                            case 2:
+                            case 3:
                                 url = _context.sent;
 
 
@@ -35521,7 +35526,7 @@ var Player = function (_React$Component) {
                                     playerOptions: _extends({}, this.state.playerOptions, { playing: true, url: url })
                                 });
 
-                            case 4:
+                            case 5:
                             case 'end':
                                 return _context.stop();
                         }
@@ -35545,6 +35550,11 @@ var Player = function (_React$Component) {
         value: function playPost(post) {
             this.setState({ post: post });
             this.playerService.playTrack(post.tracks[0]);
+        }
+    }, {
+        key: 'hasTracks',
+        value: function hasTracks() {
+            return this.state.post !== null && this.state.post.tracks.length > 0;
         }
     }, {
         key: 'currentTrack',
@@ -35660,19 +35670,19 @@ var Player = function (_React$Component) {
                     'div',
                     { className: 'playerControls' },
                     _react2.default.createElement('button', {
-                        disabled: this.state.currentTrack === null,
+                        disabled: !this.hasTracks(),
                         onClick: function onClick() {
                             return _this4.playPrev();
                         },
                         className: 'playerButton __prev' }),
                     _react2.default.createElement('button', {
-                        disabled: this.state.currentTrack === null,
+                        disabled: !this.hasTracks(),
                         onClick: function onClick() {
                             return _this4.playPause();
                         },
                         className: this.state.playerOptions.playing ? 'playerButton __pause' : 'playerButton __play' }),
                     _react2.default.createElement('button', {
-                        disabled: this.state.currentTrack === null,
+                        disabled: !this.hasTracks(),
                         onClick: function onClick() {
                             return _this4.playNext();
                         },
@@ -35690,7 +35700,7 @@ var Player = function (_React$Component) {
                 ),
                 _react2.default.createElement('div', { className: 'playerSound' }),
                 _react2.default.createElement('button', {
-                    disabled: this.state.currentTrack === null,
+                    disabled: !this.hasTracks(),
                     onClick: function onClick() {
                         return _this4.togglePlaylist();
                     },
