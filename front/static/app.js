@@ -32723,6 +32723,10 @@ var get = function () {
                                 headers: headers
                             }, function (statusCode, body) {
 
+                                if (statusCode === 204) {
+                                    return { statusCode: statusCode, body: null };
+                                }
+
                                 try {
                                     body = JSON.parse(body);
                                 } catch (e) {
@@ -32730,9 +32734,9 @@ var get = function () {
                                 }
 
                                 if (statusCode >= 400 || statusCode === 0) {
-                                    reject({ statusCode: statusCode, body: JSON.parse(body) });
+                                    reject({ statusCode: statusCode, body: body });
                                 } else {
-                                    resolve({ statusCode: statusCode, body: JSON.parse(body) });
+                                    resolve({ statusCode: statusCode, body: body });
                                 }
                             });
                         }));
@@ -32777,6 +32781,10 @@ var post = function () {
                             }, function (statusCode) {
                                 var body = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
+
+                                if (statusCode === 204) {
+                                    return resolve({ statusCode: statusCode, body: null });
+                                }
 
                                 try {
                                     body = JSON.parse(body);
@@ -32945,7 +32953,7 @@ var AuthService = function () {
                             case 4:
                                 response = _context.sent;
 
-                                this[TOKEN] = response.token;
+                                this[TOKEN] = response.body.token;
                                 return _context.abrupt('return', response.token);
 
                             case 7:
@@ -33009,7 +33017,7 @@ var BasicService = function () {
                 return body;
             }
 
-            if (Array.isArray()) {
+            if (Array.isArray(body)) {
                 return body.map(function (elm) {
                     return _this.constructor.entityClass.make(elm);
                 });
@@ -33062,20 +33070,24 @@ var BasicService = function () {
                             case 2:
                                 authHeaders = _context2.sent;
                                 _context2.prev = 3;
-                                response = (0, _http.get)(url, query, authHeaders);
+                                _context2.next = 6;
+                                return (0, _http.get)(url, query, authHeaders);
+
+                            case 6:
+                                response = _context2.sent;
                                 return _context2.abrupt('return', this.parse(response.body));
 
-                            case 8:
-                                _context2.prev = 8;
+                            case 10:
+                                _context2.prev = 10;
                                 _context2.t0 = _context2['catch'](3);
                                 throw new Error('Server respond with status code ' + _context2.t0.statusCode);
 
-                            case 11:
+                            case 13:
                             case 'end':
                                 return _context2.stop();
                         }
                     }
-                }, _callee2, this, [[3, 8]]);
+                }, _callee2, this, [[3, 10]]);
             }));
 
             function get(_x, _x2) {
@@ -33098,9 +33110,13 @@ var BasicService = function () {
 
                             case 2:
                                 authHeaders = _context3.sent;
-                                return _context3.abrupt('return', (0, _http.get)(url, body, query, authHeaders));
+                                _context3.next = 5;
+                                return (0, _http.post)(url, body, query, authHeaders);
 
-                            case 4:
+                            case 5:
+                                return _context3.abrupt('return', _context3.sent);
+
+                            case 6:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -33136,6 +33152,8 @@ var _basicService2 = _interopRequireDefault(_basicService);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -33158,6 +33176,45 @@ var PostService = function (_BasicService) {
         value: function getRecentPosts() {
             return this.get(URL);
         }
+    }, {
+        key: 'refreshPosts',
+        value: function () {
+            var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
+                var response;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                _context.next = 2;
+                                return this.post(URL + '-refresh');
+
+                            case 2:
+                                response = _context.sent;
+
+                                if (!(response.statusCode !== 204)) {
+                                    _context.next = 5;
+                                    break;
+                                }
+
+                                throw new Error('Invalid response status code ' + response.statusCode);
+
+                            case 5:
+                                return _context.abrupt('return', true);
+
+                            case 6:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function refreshPosts() {
+                return _ref.apply(this, arguments);
+            }
+
+            return refreshPosts;
+        }()
     }]);
 
     return PostService;
@@ -33292,7 +33349,7 @@ var PostList = function (_React$Component) {
             var _this2 = this;
 
             this.postService.getRecentPosts().then(function (posts) {
-                return _this2.setState({ posts: posts });
+                _this2.setState({ posts: posts });
             });
         }
     }, {
@@ -33499,11 +33556,17 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = require('react-router');
 
+var _di = require('../../di');
+
+var _di2 = _interopRequireDefault(_di);
+
 var _player = require('../components/player/player');
 
 var _player2 = _interopRequireDefault(_player);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33515,14 +33578,82 @@ var Layout = function (_React$Component) {
     _inherits(Layout, _React$Component);
 
     function Layout() {
+        var _ref;
+
         _classCallCheck(this, Layout);
 
-        return _possibleConstructorReturn(this, (Layout.__proto__ || Object.getPrototypeOf(Layout)).apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        //noinspection JSUnresolvedVariable
+        var _this = _possibleConstructorReturn(this, (_ref = Layout.__proto__ || Object.getPrototypeOf(Layout)).call.apply(_ref, [this].concat(args)));
+
+        _this.state = {
+            refreshDisabled: false
+        };
+        _this.postService = _di2.default.container.PostService;
+        return _this;
     }
 
+    /** @member PostService */
+
+
     _createClass(Layout, [{
+        key: 'fetchPosts',
+        value: function () {
+            var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
+                var response;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                this.setState({ refreshDisabled: true });
+                                _context.prev = 1;
+                                _context.next = 4;
+                                return this.postService.refreshPosts();
+
+                            case 4:
+                                response = _context.sent;
+                                _context.next = 10;
+                                break;
+
+                            case 7:
+                                _context.prev = 7;
+                                _context.t0 = _context['catch'](1);
+
+                                alert(_context.t0.message);
+
+                            case 10:
+                                _context.prev = 10;
+
+                                this.setState({ refreshDisabled: false });
+                                return _context.finish(10);
+
+                            case 13:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this, [[1, 7, 10, 13]]);
+            }));
+
+            function fetchPosts() {
+                return _ref2.apply(this, arguments);
+            }
+
+            return fetchPosts;
+        }()
+    }, {
+        key: 'onRefreshClick',
+        value: function onRefreshClick() {
+            this.fetchPosts();
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 'div',
                 { className: 'layout' },
@@ -33541,6 +33672,13 @@ var Layout = function (_React$Component) {
                         'Tags'
                     )
                 ),
+                _react2.default.createElement(
+                    'button',
+                    { disabled: this.state.refreshDisabled, onClick: function onClick() {
+                            return _this2.onRefreshClick();
+                        } },
+                    '\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u043E\u0441\u0442\u044B'
+                ),
                 this.props.children
             );
         }
@@ -33551,7 +33689,7 @@ var Layout = function (_React$Component) {
 
 exports.default = Layout;
 
-},{"../components/player/player":536,"react":527,"react-router":496}],542:[function(require,module,exports){
+},{"../../di":531,"../components/player/player":536,"react":527,"react-router":496}],542:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

@@ -19,7 +19,9 @@ export default class PostList extends React.Component {
     }
 
     componentDidMount() {
-        this.postService.getRecentPosts().then(posts => this.setState({posts}))
+        this.postService.getRecentPosts().then((posts) => {
+            this.setState({posts})
+        })
     }
 
     render() {

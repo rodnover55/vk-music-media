@@ -28,6 +28,10 @@ async function get(url, params = {}, headers = {}) {
             headers
         }, (statusCode, body) => {
 
+            if (statusCode === 204) {
+                return {statusCode, body: null}
+            }
+
             try {
                 body = JSON.parse(body);
             } catch (e) {
@@ -35,9 +39,9 @@ async function get(url, params = {}, headers = {}) {
             }
 
             if (statusCode >= 400 || statusCode === 0) {
-                reject({statusCode, body: JSON.parse(body)})
+                reject({statusCode, body})
             } else {
-                resolve({statusCode, body: JSON.parse(body)})
+                resolve({statusCode, body})
             }
         })
     });
@@ -58,6 +62,10 @@ async function post(url, body = {}, params = {}, headers = {}) {
             body: JSON.stringify(body),
             headers
         }, (statusCode, body = '') => {
+
+            if (statusCode === 204) {
+                return resolve({statusCode, body: null});
+            }
 
             try {
                 body = JSON.parse(body);

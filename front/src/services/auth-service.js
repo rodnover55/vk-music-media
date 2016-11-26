@@ -37,7 +37,7 @@ export default class AuthService {
         }
 
         const response = await post(URL, extractAppParams());
-        this[TOKEN] = response.token;
+        this[TOKEN] = response.body.token;
         return response.token;
     }
 }

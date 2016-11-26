@@ -16,7 +16,7 @@ export default class BasicService {
             return body;
         }
 
-        if (Array.isArray()) {
+        if (Array.isArray(body)) {
             return body.map(elm => this.constructor.entityClass.make(elm))
         }
 
@@ -32,7 +32,7 @@ export default class BasicService {
     async get(url, query) {
         const authHeaders = await this.getAuthHeaders();
         try {
-            const response = get(url, query, authHeaders);
+            const response = await get(url, query, authHeaders);
             return this.parse(response.body);
         } catch (errorResponse) {
             throw new Error('Server respond with status code ' + errorResponse.statusCode);
@@ -41,6 +41,6 @@ export default class BasicService {
 
     async post(url, body, query) {
         const authHeaders = await this.getAuthHeaders();
-        return get(url, body, query, authHeaders);
+        return await post(url, body, query, authHeaders);
     }
 }

@@ -9,7 +9,20 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('static'));
 
-app.get('/*', function(req, res) {
+app.post('/api/token', (req, res) => {
+    res.json({token: 'SUPPASIKRETNETOKENMAZAFAKA'})
+});
+
+app.get('/api/posts', (req, res) => {
+    res.json([]);
+});
+
+app.post('/api/posts-refresh', (req, res) => {
+    res.sendStatus(204);
+    res.json(null);
+});
+
+app.get('/*', (req, res) => {
     res.render('index.html');
 });
 
