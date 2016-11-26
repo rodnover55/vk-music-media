@@ -2,7 +2,9 @@
 
 namespace VkMusic\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use VkMusic\Models\Post;
 use VkMusic\Models\Track;
@@ -13,8 +15,29 @@ use VkMusic\Models\Track;
  */
 class PostController extends Controller
 {
-    public function index() {
-        $posts = Post::with(['tags', 'tracks'])->get();
+    public function index(Request $request) {
+        /** @var Post|Builder $query */
+        $query = Post::with(['tags', 'tracks']);
+
+        if ($request->has('tags')) {
+            $tags = explode(',', $request->get('tags'));
+
+            $query->whereHas('tags', function ($query) use ($tags) {
+                /** @var Builder $query */
+                $query->whereIn('tag', $tags);
+            });
+        }
+
+        if ($request->has('artist')) {
+            $artist = $request->get('artist');
+
+            $query->whereHas('tracks', function ($query) use ($artist) {
+                /** @var Builder $query */
+                $query->where(\DB::raw('lower(tracks.artist)'), mb_strtolower($artist));
+            });
+        }
+
+        $posts = $query->get();
 
         return new JsonResponse($this->transformPosts($posts));
     }

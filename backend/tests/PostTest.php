@@ -68,4 +68,49 @@ class PostTest extends TestCase
             ]
         ], $json);
     }
+
+    public function testGetByTags() {
+        $object = $this->loadYmlFixture(['get-posts.yml', 'second-post.yml']);
+
+        $this->auth($object['token']->token)->getJson('/api/posts?tags=test');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(1, $json);
+
+        $this->assertEquals($object['post-2']->getKey(), $json[0]['id']);
+    }
+
+    public function testGetByMultipleTags() {
+        $object = $this->loadYmlFixture(['get-posts.yml', 'second-post.yml']);
+
+        $this->auth($object['token']->token)->getJson('/api/posts?tags=test,folk');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(2, $json);
+
+        $this->assertEquals([
+            $object['post']->getKey(),
+            $object['post-2']->getKey()
+        ], array_pluck($json, 'id'));
+    }
+
+    public function testByArtist() {
+        $object = $this->loadYmlFixture(['get-posts.yml', 'second-post.yml']);
+
+        $this->auth($object['token']->token)->getJson('/api/posts?artist=Test');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(1, $json);
+
+        $this->assertEquals($object['post-2']->getKey(), $json[0]['id']);
+    }
 }

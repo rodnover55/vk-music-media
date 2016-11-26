@@ -16,7 +16,7 @@ use DateTime;
  */
 class PostsRefreshController extends Controller
 {
-    public function store(Guard $auth) {
+    public function store() {
         $token = $this->getToken();
 
         $data = $token->data;
