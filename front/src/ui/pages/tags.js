@@ -9,15 +9,17 @@ export default class NotFound extends React.Component {
     render() {
         const tagString = this.props.location.query.tags || '';
         let tagList = [];
+        let query = {};
 
         if (tagString !== '') {
             tagList = tagString.split(',');
+            query['tags'] = tagString;
         }
 
         return (
             <section className="page">
                 <TagList tags={tagList}/>
-                <PostList/>
+                <PostList query={query}/>
             </section>
         )
     }

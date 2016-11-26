@@ -18,7 +18,7 @@ async function get(url, params = {}, headers = {}) {
     const queryString = buildQueryString(params);
 
     if (queryString !== '') {
-        url += queryString
+        url += '?' + queryString
     }
 
     return new Promise((resolve, reject) => {

@@ -18,8 +18,14 @@ export default class PostList extends React.Component {
         this.postService = di.container.PostService
     }
 
+    componentWillReceiveProps(newProps) {
+        this.postService.getRecentPosts(newProps.query).then((posts) => {
+            this.setState({posts})
+        })
+    }
+
     componentDidMount() {
-        this.postService.getRecentPosts().then((posts) => {
+        this.postService.getRecentPosts(this.props.query).then((posts) => {
             this.setState({posts})
         })
     }

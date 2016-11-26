@@ -23,10 +23,22 @@ export default class TagList extends React.Component {
         this.tagService.getTags().then(tags => this.setState({tags}))
     }
 
+    getAddClass(tag) {
+        if (this.props.tags.indexOf(tag) === -1) {
+            return ''
+        }
+
+        return '__active'
+    }
+
     render() {
         return (
             <div className="tagList">
-                {this.state.tags.map((tag, index) => <Tag key={index} tag={tag}/>)}
+                {this.state.tags.map((tag, index) => {
+                    return (
+                        <Tag addClass={this.getAddClass(tag)} key={index} tag={tag}/>
+                    )
+                })}
             </div>
         )
     }

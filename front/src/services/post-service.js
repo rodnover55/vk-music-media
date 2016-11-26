@@ -7,8 +7,8 @@ export default class PostService extends BasicService {
 
     static entityClass = PostEntity;
 
-    getRecentPosts() {
-        return this.get(URL);
+    getRecentPosts(query = {}) {
+        return this.get(URL, query);
     }
 
     getById(id) {

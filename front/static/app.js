@@ -34590,7 +34590,7 @@ var get = function () {
 
 
                         if (queryString !== '') {
-                            url += queryString;
+                            url += '?' + queryString;
                         }
 
                         return _context.abrupt('return', new Promise(function (resolve, reject) {
@@ -35316,7 +35316,9 @@ var PostService = function (_BasicService) {
     _createClass(PostService, [{
         key: 'getRecentPosts',
         value: function getRecentPosts() {
-            return this.get(URL);
+            var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return this.get(URL, query);
         }
     }, {
         key: 'getById',
@@ -35755,12 +35757,21 @@ var PostList = function (_React$Component) {
 
 
     _createClass(PostList, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(newProps) {
             var _this2 = this;
 
-            this.postService.getRecentPosts().then(function (posts) {
+            this.postService.getRecentPosts(newProps.query).then(function (posts) {
                 _this2.setState({ posts: posts });
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this3 = this;
+
+            this.postService.getRecentPosts(this.props.query).then(function (posts) {
+                _this3.setState({ posts: posts });
             });
         }
     }, {
@@ -35952,13 +35963,24 @@ var TagList = function (_React$Component) {
             });
         }
     }, {
+        key: 'getAddClass',
+        value: function getAddClass(tag) {
+            if (this.props.tags.indexOf(tag) === -1) {
+                return '';
+            }
+
+            return '__active';
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this3 = this;
+
             return _react2.default.createElement(
                 'div',
                 { className: 'tagList' },
                 this.state.tags.map(function (tag, index) {
-                    return _react2.default.createElement(_tag2.default, { key: index, tag: tag });
+                    return _react2.default.createElement(_tag2.default, { addClass: _this3.getAddClass(tag), key: index, tag: tag });
                 })
             );
         }
@@ -36006,7 +36028,7 @@ var Tag = function (_React$Component) {
         value: function render() {
             return _react2.default.createElement(
                 _reactRouter.Link,
-                { className: 'tag', to: this.tagUrl },
+                { className: this.props.addClass + ' tag', to: this.tagUrl },
                 '#',
                 this.tagName
             );
@@ -36414,16 +36436,18 @@ var NotFound = function (_React$Component) {
         value: function render() {
             var tagString = this.props.location.query.tags || '';
             var tagList = [];
+            var query = {};
 
             if (tagString !== '') {
                 tagList = tagString.split(',');
+                query['tags'] = tagString;
             }
 
             return _react2.default.createElement(
                 'section',
                 { className: 'page' },
                 _react2.default.createElement(_tagList2.default, { tags: tagList }),
-                _react2.default.createElement(_postList2.default, null)
+                _react2.default.createElement(_postList2.default, { query: query })
             );
         }
     }]);
