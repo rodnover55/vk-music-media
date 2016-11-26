@@ -5,6 +5,7 @@ namespace VkMusic\Tests;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\TestCase as ParentTestCase;
 use PHPUnit_Framework_Assert as PHPUnitAssert;
+use Rnr\Alice\FixturesLoader;
 use VkMusic\Tests\Support\DatabaseTruncate;
 
 abstract class TestCase extends ParentTestCase
@@ -15,6 +16,13 @@ abstract class TestCase extends ParentTestCase
      * @var string
      */
     protected $baseUrl = 'http://localhost';
+
+    /** @var  FixturesLoader */
+    protected $fixtureLoader;
+
+    private $token;
+
+    const ROOT_TEST = __DIR__;
 
     /**
      * Creates the application.
@@ -68,7 +76,7 @@ abstract class TestCase extends ParentTestCase
     {
         if ($statusCode >= 500) {
             $message = $this->response->exception;
-        } elseif ($statusCode >= 400) {
+        } elseif ($statusCode == 422) {
             $message = print_r($this->decodeResponseJson(), true);
         } else {
             $message = '';
@@ -87,4 +95,49 @@ abstract class TestCase extends ParentTestCase
             $this->runDatabaseTruncate();
         }
     }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->fixtureLoader = $this->app->make(FixturesLoader::class);
+    }
+
+    public function loadYmlFixture($name) {
+        $files = is_array($name) ? $name : [$name];
+
+        return $this->fixtureLoader->load(array_map(function ($name) {
+            return __DIR__ . "/fixtures/{$name}";
+        }, $files));
+    }
+
+    public function loadJsonFixture($name) {
+        return json_decode(file_get_contents(__DIR__ . "/fixtures/{$name}"), true);
+    }
+
+    protected function auth($token) {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function call(
+        $method, $uri, $parameters = [],
+        $cookies = [], $files = [],
+        $server = [], $content = null
+    ) {
+        if (isset($this->token)) {
+            $server['HTTP_X_TOKEN'] = $this->token;
+        }
+
+        $response = parent::call(
+            $method, $uri, $parameters,
+            $cookies, $files, $server, $content);
+
+        $this->token = null;
+
+        return $response;
+    }
+
+
 }

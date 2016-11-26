@@ -1,0 +1,16 @@
+VkMusic\Models\Token:
+  token:
+    token: dcd94fde4e4b941a6c25bef217e8b2b75092b8171f66d70c269bc524506e65b0
+    user_id: 3108667
+    data: { api_url: 'https://api.vk.com/api.php', api_id: '5747571', api_settings: '1', viewer_id: '3108667', viewer_type: '4', sid: a814b54b17ac4cc58edc9cfd91eff64599344d10e190bdf4448f3a538cd2f9dff2d0cce65c7c3fe51810f, secret: 26902419a5, access_token: 946385ec99b65ac42b5e586a14e78b7cc63d6fe00cf5c09d1899b545b5bde93aefe7d6a1088d5ec1ba98a, user_id: '0', group_id: '133947888', is_app_user: '1', auth_key: 6c873241b6e8ab0341773cf6e21cb9ad, language: '0', parent_language: '0', ad_info: ElsdCQJdQV1iAwNNRARQBHV7FAsmMQxVUUZGNgBQbwYfQyQrWQA, is_secure: '1', ads_app_id: 5747571_83ee1fbd32b9777a96, api_result: '{"response":[{"uid":3108667,"first_name":"Сергей","last_name":"Мельников","nickname":""}]}', referrer: unknown, lc_name: 2e5d6336, sign: cec69e13b34c53a6a1f3cde1683c70f64284280ff34b92f07f1f1b4962fd5169, hash: true }
+    created_at: '2016-11-26 14:32:18'
+    updated_at: '2016-11-26 14:32:18'
+    user: '@users-3108667'
+VkMusic\Models\User:
+  users-3108667:
+    uid: 3108667
+    first_name: Сергей
+    last_name: Мельников
+    nickname: ''
+    created_at: '2016-11-26 14:32:18'
+    updated_at: '2016-11-26 14:32:18'

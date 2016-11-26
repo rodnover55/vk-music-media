@@ -3,6 +3,7 @@
 namespace VkMusic\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use VkMusic\Http\Middleware\ApiAuthMiddleware;
 
 class Kernel extends HttpKernel
 {
@@ -35,6 +36,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            'auth'
         ],
     ];
 
@@ -46,7 +48,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth' => ApiAuthMiddleware::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
