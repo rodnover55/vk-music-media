@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => VkMusic\User::class,
+            'model' => \VkMusic\Models\User::class,
         ],
 
         // 'users' => [
