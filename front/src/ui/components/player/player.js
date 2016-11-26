@@ -42,6 +42,7 @@ export default class Player extends React.Component {
      */
     playPost(post) {
         this.setState({post});
+        this.playerService.playTrack(post.tracks[0].id)
     }
 
     currentPlaylist() {

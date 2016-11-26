@@ -33841,6 +33841,7 @@ var Player = function (_React$Component) {
         key: 'playPost',
         value: function playPost(post) {
             this.setState({ post: post });
+            this.playerService.playTrack(post.tracks[0].id);
         }
     }, {
         key: 'currentPlaylist',
