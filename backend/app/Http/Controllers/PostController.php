@@ -28,6 +28,15 @@ class PostController extends Controller
             });
         }
 
+        if ($request->has('artist')) {
+            $artist = $request->get('artist');
+
+            $query->whereHas('tracks', function ($query) use ($artist) {
+                /** @var Builder $query */
+                $query->where(\DB::raw('lower(tracks.artist)'), mb_strtolower($artist));
+            });
+        }
+
         $posts = $query->get();
 
         return new JsonResponse($this->transformPosts($posts));

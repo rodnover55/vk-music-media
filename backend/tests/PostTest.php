@@ -78,28 +78,9 @@ class PostTest extends TestCase
 
         $json = $this->decodeResponseJson();
 
-        foreach ($json as $post) {
-            $this->seeJsonStructure([
-                'id', 'pid', 'group_id', 'created_at', 'title', 'image', 'description',
-                'created_at', 'updated_at',
-                'tags' => [
-                    '*'=> []
-                ],
-                'tracks' => [
-                    '*' => [
-                        'id', 'aid', 'owner_id', 'title', 'artist', 'duration',
-                        'created_at', 'updated_at'
-                    ]
-                ]
-            ], $post);
-        }
-
         $this->assertCount(1, $json);
 
-        /** @var Post $post */
-        $post = $object['post-2'];
-        $this->assertCount($post->tags->count(), $json[0]['tags']);
-        $this->assertCount($post->tracks->count(), $json[0]['tracks']);
+        $this->assertEquals($object['post-2']->getKey(), $json[0]['id']);
     }
 
     public function testGetByMultipleTags() {
@@ -111,33 +92,25 @@ class PostTest extends TestCase
 
         $json = $this->decodeResponseJson();
 
-        foreach ($json as $post) {
-            $this->seeJsonStructure([
-                'id', 'pid', 'group_id', 'created_at', 'title', 'image', 'description',
-                'created_at', 'updated_at',
-                'tags' => [
-                    '*'=> []
-                ],
-                'tracks' => [
-                    '*' => [
-                        'id', 'aid', 'owner_id', 'title', 'artist', 'duration',
-                        'created_at', 'updated_at'
-                    ]
-                ]
-            ], $post);
-        }
-
         $this->assertCount(2, $json);
 
-        /** @var Post $post */
-        $post = $object['post'];
-        $post2 = $object['post-2'];
-
-        $this->assertCount($post->tags->count(), $json[0]['tags']);
-        $this->assertCount($post->tracks->count(), $json[0]['tracks']);
-
-        $this->assertCount($post2->tags->count(), $json[1]['tags']);
-        $this->assertCount($post2->tracks->count(), $json[1]['tracks']);
+        $this->assertEquals([
+            $object['post']->getKey(),
+            $object['post-2']->getKey()
+        ], array_pluck($json, 'id'));
     }
 
+    public function testByArtist() {
+        $object = $this->loadYmlFixture(['get-posts.yml', 'second-post.yml']);
+
+        $this->auth($object['token']->token)->getJson('/api/posts?artist=Test');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(1, $json);
+
+        $this->assertEquals($object['post-2']->getKey(), $json[0]['id']);
+    }
 }
