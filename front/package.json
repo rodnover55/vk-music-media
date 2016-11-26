@@ -37,6 +37,7 @@
     "nanoajax": "^0.4.3",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
+    "react-player": "^0.12.1",
     "react-router": "^3.0.0"
   }
 }

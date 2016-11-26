@@ -31,7 +31,7 @@ function* makeTracks(times) {
             id: i + 1,
             artist: 'Super group',
             title: 'Track no ' + (i + 1),
-            link: 'http://music.ru/' + (i + 1) + '.mp3'
+            link: 'https://psv4.vk.me/c4763/u5620198/audios/31d1027c14a3.mp3?salt=' + i
         };
     }
 }

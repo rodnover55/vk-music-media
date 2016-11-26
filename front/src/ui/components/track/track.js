@@ -23,15 +23,15 @@ export default class Track extends React.Component {
         return className;
     }
 
-    onPlayClick(id) {
-        this.playerService.playTrack(id)
+    onPlayClick(track) {
+        this.playerService.playTrack(track)
     }
 
     render() {
         return (
             <div className={this.className}>
                 {this.props.track.artist} &mdash; {this.props.track.title}
-                <button onClick={()=>this.onPlayClick(this.props.track.id)} className="trackPlay">Play</button>
+                <button onClick={()=>this.onPlayClick(this.props.track)} className="trackPlay">Play</button>
             </div>
         )
     }

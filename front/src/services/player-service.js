@@ -42,8 +42,8 @@ export default class PlayerService {
         }
     }
 
-    playTrack(id) {
-        const track = this[CURRENT_POST].tracks.find(track => track.id === id);
+    playTrack(desireTrack) {
+        const track = this[CURRENT_POST].tracks.find(track => track === desireTrack);
 
         if (track === undefined) {
             throw new Error('Current post does not contain this track');
@@ -51,6 +51,30 @@ export default class PlayerService {
 
         for (const cb of this[TRACK_CALLBACKS]) {
             cb(track);
+        }
+    }
+
+    playNext(currentTrack) {
+        let index = this[CURRENT_POST].tracks.indexOf(currentTrack) + 1;
+
+        if (this[CURRENT_POST].tracks[index] === undefined) {
+            index = 0;
+        }
+
+        for (const cb of this[TRACK_CALLBACKS]) {
+            cb(this[CURRENT_POST].tracks[index]);
+        }
+    }
+
+    playPrev(currentTrack) {
+        let index = this[CURRENT_POST].tracks.indexOf(currentTrack) - 1;
+
+        if (this[CURRENT_POST].tracks[index] === undefined) {
+            index = this[CURRENT_POST].tracks.length - 1;
+        }
+
+        for (const cb of this[TRACK_CALLBACKS]) {
+            cb(this[CURRENT_POST].tracks[index]);
         }
     }
 }

@@ -3,13 +3,19 @@ import React from 'react'
 import di from '../../../di';
 
 import Track from '../track/track';
+import ReactPlayer from 'react-player';
 
 export default class Player extends React.Component {
 
     state = {
         post: null,
         currentTrack: null,
-        hidePlaylist: true
+        hidePlaylist: true,
+        playerOptions: {
+            playing: false,
+            volume: 0.8,
+            hidden: true
+        }
     };
 
     /** @member PlayerService */
@@ -34,7 +40,10 @@ export default class Player extends React.Component {
     }
 
     playTrack(currentTrack) {
-        this.setState({currentTrack});
+        this.setState({
+            currentTrack,
+            playerOptions: {...this.state.playerOptions, ...{playing: true}}
+        });
     }
 
     /**
@@ -42,7 +51,7 @@ export default class Player extends React.Component {
      */
     playPost(post) {
         this.setState({post});
-        this.playerService.playTrack(post.tracks[0].id)
+        this.playerService.playTrack(post.tracks[0])
     }
 
     currentPlaylist() {
@@ -81,21 +90,75 @@ export default class Player extends React.Component {
         )
     }
 
+    player() {
+        if (this.state.currentTrack === null) {
+            return '';
+        }
+
+        return <ReactPlayer url={this.state.currentTrack.link} {...this.state.playerOptions} />
+    }
+
     togglePlaylist() {
         this.setState({hidePlaylist: !this.state.hidePlaylist});
+    }
+
+    playPause() {
+        if (this.state.post !== null) {
+            if (this.state.currentTrack === null) {
+                this.playerService.playTrack(this.state.post.tracks[0]);
+            } else {
+                this.setState({playerOptions: {
+                    ...this.state.playerOptions,
+                    ...{playing: !this.state.playerOptions.playing}
+                }})
+            }
+        }
+    }
+
+    playNext() {
+        if (this.state.post !== null) {
+            const track = this.state.currentTrack || this.state.post.tracks[0];
+            this.playerService.playNext(track)
+        }
+    }
+
+    playPrev() {
+        if (this.state.post !== null) {
+            const track = this.state.currentTrack || this.state.post.tracks[0];
+            this.playerService.playPrev(track)
+        }
     }
 
     render() {
         return (
             <div className="player">
+                {this.player()}
                 {this.currentPlaylist()}
-                <button className="playerButton __prev">&larr;</button>
-                <button className="playerButton __play">Play</button>
-                <button className="playerButton __next">&rarr;</button>
+                <button
+                    disabled={this.state.currentTrack === null}
+                    onClick={()=>this.playPrev()}
+                    className="playerButton __prev">
+                    &larr;
+                </button>
+                <button
+                    disabled={this.state.currentTrack === null}
+                    onClick={()=>this.playPause()}
+                    className="playerButton __play">
+                    Play
+                </button>
+                <button
+                    disabled={this.state.currentTrack === null}
+                    onClick={()=>this.playNext()}
+                    className="playerButton __next">
+                    &rarr;
+                </button>
                 {this.currentTrack()}
                 <div className="playerProgress"></div>
                 <div className="playerSound"></div>
-                <button onClick={()=>this.togglePlaylist()} className="playerShowPlaylist">
+                <button
+                    disabled={this.state.currentTrack === null}
+                    onClick={()=>this.togglePlaylist()}
+                    className="playerShowPlaylist">
                     show playlist
                 </button>
                 {this.playlist()}
