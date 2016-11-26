@@ -36,7 +36,12 @@ export default class TagList extends React.Component {
             <div className="tagList">
                 {this.state.tags.map((tag, index) => {
                     return (
-                        <Tag addClass={this.getAddClass(tag)} key={index} tag={tag}/>
+                        <Tag
+                            multiple={true}
+                            tags={this.props.tags}
+                            addClass={this.getAddClass(tag)}
+                            key={index}
+                            tag={tag}/>
                     )
                 })}
             </div>

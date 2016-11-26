@@ -35980,7 +35980,12 @@ var TagList = function (_React$Component) {
                 'div',
                 { className: 'tagList' },
                 this.state.tags.map(function (tag, index) {
-                    return _react2.default.createElement(_tag2.default, { addClass: _this3.getAddClass(tag), key: index, tag: tag });
+                    return _react2.default.createElement(_tag2.default, {
+                        multiple: true,
+                        tags: _this3.props.tags,
+                        addClass: _this3.getAddClass(tag),
+                        key: index,
+                        tag: tag });
                 })
             );
         }
@@ -36028,7 +36033,9 @@ var Tag = function (_React$Component) {
         value: function render() {
             return _react2.default.createElement(
                 _reactRouter.Link,
-                { className: this.props.addClass + ' tag', to: this.tagUrl },
+                {
+                    className: this.props.addClass + ' tag',
+                    to: this.tagUrl },
                 '#',
                 this.tagName
             );
@@ -36041,7 +36048,25 @@ var Tag = function (_React$Component) {
     }, {
         key: 'tagUrl',
         get: function get() {
-            return { pathname: '/tags', query: { tags: this.props.tag } };
+            var _this2 = this;
+
+            if (this.props.multiple === undefined) {
+                return { pathname: '/tags', query: {
+                        tags: this.props.tag
+                    } };
+            }
+
+            if (this.props.tags.indexOf(this.props.tag) === -1) {
+                return { pathname: '/tags', query: {
+                        tags: this.props.tags.concat([this.props.tag]).join(',')
+                    } };
+            }
+
+            return { pathname: '/tags', query: {
+                    tags: this.props.tags.filter(function (tag) {
+                        return tag !== _this2.props.tag;
+                    }).join(',')
+                } };
         }
     }]);
 
