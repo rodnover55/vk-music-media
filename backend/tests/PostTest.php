@@ -44,7 +44,7 @@ class PostTest extends TestCase
         $this->assertCount($post->tracks->count(), $json[0]['tracks']);
     }
 
-    public function testPostItem() {
+    public function testGetItem() {
         $object = $this->loadYmlFixture('get-posts.yml');
 
         $postId = $object['post']->id;
@@ -84,9 +84,9 @@ class PostTest extends TestCase
     }
 
     public function testGetByMultipleTags() {
-        $object = $this->loadYmlFixture(['get-posts.yml', 'second-post.yml']);
+        $objects = $this->loadYmlFixture(['get-posts.yml', 'second-post.yml']);
 
-        $this->auth($object['token']->token)->getJson('/api/posts?tags=test,folk');
+        $this->auth($objects['token']->token)->getJson('/api/posts?tags=test,folk');
 
         $this->assertResponseOk();
 
@@ -95,8 +95,8 @@ class PostTest extends TestCase
         $this->assertCount(2, $json);
 
         $this->assertEquals([
-            $object['post']->getKey(),
-            $object['post-2']->getKey()
+            $objects['post']->getKey(),
+            $objects['post-2']->getKey()
         ], array_pluck($json, 'id'));
     }
 
