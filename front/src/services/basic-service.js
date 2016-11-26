@@ -26,9 +26,6 @@ export default class BasicService {
 
     async getAuthHeaders() {
         const token = await this.authService.authenticate();
-
-        console.log(token);
-
         return {'X-Token': token}
     }
 

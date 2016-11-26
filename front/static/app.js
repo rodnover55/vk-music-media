@@ -34268,7 +34268,7 @@ bottle.service('AuthService', _authService2.default);
 bottle.service('BasicService', _basicService2.default, 'AuthService');
 bottle.service('PostService', _postService2.default, 'AuthService');
 bottle.service('TagService', _tagService2.default, 'AuthService');
-bottle.service('PlayerService', _playerService2.default, 'PostService');
+bottle.service('PlayerService', _playerService2.default, 'AuthService', 'PostService');
 
 exports.default = bottle;
 
@@ -34917,13 +34917,9 @@ var BasicService = function () {
 
                             case 2:
                                 token = _context.sent;
-
-
-                                console.log(token);
-
                                 return _context.abrupt('return', { 'X-Token': token });
 
-                            case 5:
+                            case 4:
                             case 'end':
                                 return _context.stop();
                         }
@@ -35039,26 +35035,40 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _http = require('../lib/http');
 
+var _basicService = require('./basic-service');
+
+var _basicService2 = _interopRequireDefault(_basicService);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var POST_CALLBACKS = Symbol('CALLBACKS');
 var TRACK_CALLBACKS = Symbol('TRACK_CALLBACKS');
 var CURRENT_POST = Symbol('CURRENT_POST');
 
-var VK_URL = 'https://api.vk.com/method/audio.getById';
+var URL = '/api/tracks';
 
-var PlayerService = function () {
+var PlayerService = function (_BasicService) {
+    _inherits(PlayerService, _BasicService);
 
     /** @member PostService */
-    function PlayerService(postService) {
+    function PlayerService(authService, postService) {
         _classCallCheck(this, PlayerService);
 
-        this.postService = postService;
-        this[POST_CALLBACKS] = new Set();
-        this[TRACK_CALLBACKS] = new Set();
-        this[CURRENT_POST] = null;
+        var _this = _possibleConstructorReturn(this, (PlayerService.__proto__ || Object.getPrototypeOf(PlayerService)).call(this, authService));
+
+        _this.postService = postService;
+        _this[POST_CALLBACKS] = new Set();
+        _this[TRACK_CALLBACKS] = new Set();
+        _this[CURRENT_POST] = null;
+        return _this;
     }
 
     /** @member PostEntity */
@@ -35173,14 +35183,11 @@ var PlayerService = function () {
                         switch (_context2.prev = _context2.next) {
                             case 0:
                                 _context2.next = 2;
-                                return (0, _http.post)(VK_URL, {
-                                    audios: track.owner_id + '_' + track.aid,
-                                    version: '5.60'
-                                });
+                                return this.get(URL + '/' + track.id);
 
                             case 2:
                                 response = _context2.sent;
-                                return _context2.abrupt('return', response.body.url);
+                                return _context2.abrupt('return', response.link);
 
                             case 4:
                             case 'end':
@@ -35303,11 +35310,11 @@ var PlayerService = function () {
     }]);
 
     return PlayerService;
-}();
+}(_basicService2.default);
 
 exports.default = PlayerService;
 
-},{"../lib/http":548}],552:[function(require,module,exports){
+},{"../lib/http":548,"./basic-service":550}],552:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

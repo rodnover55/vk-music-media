@@ -49,6 +49,10 @@ app.get('/api/posts/:id', (req, res) => {
     });
 });
 
+app.get('/api/tracks/:id', (req, res) => {
+    res.json({link: 'https://psv4.vk.me/c4763/u5620198/audios/31d1027c14a3.mp3?aa=' +(+ new Date())})
+});
+
 app.get('/api/tags', (req, res) => {
     res.json(['pagan', 'folk', 'russia', 'ivancore']);
 });

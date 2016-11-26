@@ -1,12 +1,13 @@
-import { post } from '../lib/http';
+import { get } from '../lib/http';
+import BasicService from './basic-service';
 
 const POST_CALLBACKS = Symbol('CALLBACKS');
 const TRACK_CALLBACKS = Symbol('TRACK_CALLBACKS');
 const CURRENT_POST = Symbol('CURRENT_POST');
 
-const VK_URL = 'https://api.vk.com/method/audio.getById';
+const URL = '/api/tracks';
 
-export default class PlayerService {
+export default class PlayerService extends BasicService {
 
     /** @member PostService */
     postService;
@@ -14,7 +15,8 @@ export default class PlayerService {
     /** @member PostEntity */
     [CURRENT_POST];
 
-    constructor(postService) {
+    constructor(authService, postService) {
+        super(authService);
         this.postService = postService;
         this[POST_CALLBACKS] = new Set;
         this[TRACK_CALLBACKS] = new Set;
@@ -50,12 +52,8 @@ export default class PlayerService {
      * @param track {TrackEntity}
      */
     async getMediaUrl(track) {
-        const response = await post(VK_URL, {
-            audios: `${track.owner_id}_${track.aid}`,
-            version: '5.60'
-        });
-
-        return response.body.url;
+        const response = await this.get(URL + '/' + track.id, );
+        return response.link;
     }
 
     playTrack(desireTrack) {
