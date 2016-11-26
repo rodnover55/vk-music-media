@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "./node_modules/.bin/babel-node express.js"
   },
   "author": "Artёm Pavlov <pavl0ff@ya.ru> (https://github.com/temapavloff)",
   "license": "ISC",
