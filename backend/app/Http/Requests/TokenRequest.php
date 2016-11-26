@@ -31,11 +31,7 @@ class TokenRequest extends FormRequest
             'viewer_type' => 'integer|required',
             'access_token' => 'string|required',
             'group_id' => 'integer|required',
-            'api_result.response' => 'size:1',
-            'api_result.response.*.uid' => 'integer|required',
-            'api_result.response.*.first_name' =>  'string|present',
-            'api_result.response.*.last_name' => 'string|present',
-            'api_result.response.*.nickname' => 'string|present'
+            'api_result' => 'string|required'
         ];
     }
 }

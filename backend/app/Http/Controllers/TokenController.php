@@ -39,7 +39,7 @@ class TokenController extends Controller
      */
     public function store(TokenRequest $request)
     {
-        $response = $request->get('api_result')['response'][0];
+        $response = json_decode($request->get('api_result'), true)['response'][0];
 
 
         $user = User::firstOrCreate([
