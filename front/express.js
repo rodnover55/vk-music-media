@@ -15,7 +15,7 @@ app.post('/api/token', (req, res) => {
 
 app.get('/api/posts', (req, res) => {
     res.json([{
-        id: 0,
+        id: 1,
         created_at: '1970-01-01',
         title: 'Very first post',
         image: 'https://pp.vk.me/c836133/v836133667/fa72/qXmhC4F18NM.jpg',
@@ -25,21 +25,26 @@ app.get('/api/posts', (req, res) => {
     }]);
 });
 
+function* makeTracks(times) {
+    for (let i = 0; i < times; i += 1) {
+        yield {
+            id: i + 1,
+            artist: 'Super group',
+            title: 'Track no ' + (i + 1),
+            link: 'http://music.ru/' + (i + 1) + '.mp3'
+        };
+    }
+}
+
 app.get('/api/posts/:id', (req, res) => {
     res.json({
-        id: 0,
+        id: 1,
         created_at: '1970-01-01',
         title: 'Very first post',
         image: 'https://pp.vk.me/c836133/v836133667/fa72/qXmhC4F18NM.jpg',
         description: 'Новые треки супер группы',
         tags: ['pagan', 'folk', 'russia', 'ivancore'],
-        tracks: [
-            'http://qwe.ru/1.mp3',
-            'http://qwe.ru/2.mp3',
-            'http://qwe.ru/3.mp3',
-            'http://qwe.ru/4.mp3',
-            'http://qwe.ru/5.mp3',
-        ],
+        tracks: [...makeTracks(5)],
     });
 });
 
