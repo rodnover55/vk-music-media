@@ -16,15 +16,19 @@ class RouteServiceProvider extends ServiceProvider
     public function map()
     {
         $this->mapApiRoutes();
+        $this->mapWebRoutes();
     }
 
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
+    protected function mapWebRoutes()
+    {
+        /** @var Router $router */
+        $router = $this->app->make(Router::class);
+
+        $router->get('/{route}', function () {
+            require base_path('public/index.html');
+        })->where('route', '(.*)');
+    }
+
     protected function mapApiRoutes()
     {
         /** @var Router $router */
