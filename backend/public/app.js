@@ -36448,10 +36448,17 @@ var NotFound = function (_React$Component) {
     _createClass(NotFound, [{
         key: 'render',
         value: function render() {
+            var tagString = this.props.location.query.tags || '';
+            var tagList = [];
+
+            if (tagString !== '') {
+                tagList = tagString.split(',');
+            }
+
             return _react2.default.createElement(
                 'section',
                 { className: 'page' },
-                _react2.default.createElement(_tagList2.default, null),
+                _react2.default.createElement(_tagList2.default, { tags: tagList }),
                 _react2.default.createElement(_postList2.default, null)
             );
         }

@@ -233,6 +233,9 @@ body {
 .tag:first-child {
   margin-left: 0;
 }
+.tag.__active {
+  color: #006400;
+}
 .tagList {
   margin-bottom: 20px;
 }
