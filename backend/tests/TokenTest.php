@@ -12,6 +12,13 @@ class TokenTest extends TestCase
     use DatabaseTruncate;
 
     public function testPost() {
+        $userData = [
+            'uid' => 3108667,
+            'first_name' => 'Сергей',
+            'last_name' => 'Мельников',
+            'nickname' => ''
+        ];
+
         $data = [
             'api_url' => 'https://api.vk.com/api.php',
             'api_id' => '5747571',
@@ -33,16 +40,9 @@ class TokenTest extends TestCase
             'lc_name' => 81501025,
             'sign' => 'dd1e5480eea832e4ea32cb95d9108b39217eb987d2d68989a9ea2e424e174968',
             'hash' => '',
-            'api_result' => [
-                'response' => [
-                    [
-                        'uid' => 3108667,
-                        'first_name' => 'Сергей',
-                        'last_name' => 'Мельников',
-                        'nickname' => ''
-                    ]
-                ]
-            ]
+            'api_result' => json_encode([
+                'response' => [$userData]
+            ])
         ];
 
         $this->postJson('/api/token', $data);
@@ -57,9 +57,9 @@ class TokenTest extends TestCase
 
         $this->seeInDatabase('users', [
             'uid' => $data['viewer_id'],
-            'first_name' => $data['api_result']['response'][0]['first_name'],
-            'last_name' => $data['api_result']['response'][0]['last_name'],
-            'nickname' => $data['api_result']['response'][0]['nickname'],
+            'first_name' => $userData['first_name'],
+            'last_name' => $userData['last_name'],
+            'nickname' => $userData['nickname'],
         ]);
 
         $this->seeInDatabase('tokens', [

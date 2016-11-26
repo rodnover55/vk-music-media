@@ -5,7 +5,7 @@ namespace VkMusic\Models;
 
 /**
  * @property string token
- * @author Sergei Melnikov <me@rnr.name>
+ * @property User user
  */
 class Token extends Model
 {
