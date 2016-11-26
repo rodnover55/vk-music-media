@@ -33462,7 +33462,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var CALLBACKS = Symbol('CALLBACKS');
+var POST_CALLBACKS = Symbol('CALLBACKS');
+var TRACK_CALLBACKS = Symbol('TRACK_CALLBACKS');
 var CURRENT_POST = Symbol('CURRENT_POST');
 
 var PlayerService = function () {
@@ -33472,7 +33473,8 @@ var PlayerService = function () {
         _classCallCheck(this, PlayerService);
 
         this.postService = postService;
-        this[CALLBACKS] = new Set();
+        this[POST_CALLBACKS] = new Set();
+        this[TRACK_CALLBACKS] = new Set();
         this[CURRENT_POST] = null;
     }
 
@@ -33480,14 +33482,24 @@ var PlayerService = function () {
 
 
     _createClass(PlayerService, [{
-        key: 'removeCallback',
-        value: function removeCallback(callback) {
-            this[CALLBACKS].delete(callback);
+        key: 'removePostCallback',
+        value: function removePostCallback(callback) {
+            this[POST_CALLBACKS].delete(callback);
         }
     }, {
-        key: 'setCallback',
-        value: function setCallback(callback) {
-            this[CALLBACKS].add(callback);
+        key: 'setPostCallback',
+        value: function setPostCallback(callback) {
+            this[POST_CALLBACKS].add(callback);
+        }
+    }, {
+        key: 'removeTrackCallback',
+        value: function removeTrackCallback(callback) {
+            this[TRACK_CALLBACKS].delete(callback);
+        }
+    }, {
+        key: 'setTrackCallback',
+        value: function setTrackCallback(callback) {
+            this[TRACK_CALLBACKS].add(callback);
         }
     }, {
         key: 'playPost',
@@ -33511,7 +33523,7 @@ var PlayerService = function () {
                                 _didIteratorError = false;
                                 _iteratorError = undefined;
                                 _context.prev = 7;
-                                for (_iterator = this[CALLBACKS][Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                for (_iterator = this[POST_CALLBACKS][Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                                     cb = _step.value;
 
                                     cb(post);
@@ -33563,6 +33575,42 @@ var PlayerService = function () {
 
             return playPost;
         }()
+    }, {
+        key: 'playTrack',
+        value: function playTrack(id) {
+            var track = this[CURRENT_POST].tracks.find(function (track) {
+                return track.id === id;
+            });
+
+            if (track === undefined) {
+                throw new Error('Current post does not contain this track');
+            }
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this[TRACK_CALLBACKS][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var cb = _step2.value;
+
+                    cb(track);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
     }]);
 
     return PlayerService;
@@ -33726,6 +33774,10 @@ var _di = require('../../../di');
 
 var _di2 = _interopRequireDefault(_di);
 
+var _track = require('../track/track');
+
+var _track2 = _interopRequireDefault(_track);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33751,10 +33803,12 @@ var Player = function (_React$Component) {
 
         _this.state = {
             post: null,
-            currentTrack: null
+            currentTrack: null,
+            hidePlaylist: true
         };
         _this.playerService = _di2.default.container.PlayerService;
         _this.playPost = _this.playPost.bind(_this);
+        _this.playTrack = _this.playTrack.bind(_this);
         return _this;
     }
 
@@ -33764,16 +33818,22 @@ var Player = function (_React$Component) {
     _createClass(Player, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.playerService.setCallback(this.playPost);
+            this.playerService.setPostCallback(this.playPost);
+            this.playerService.setTrackCallback(this.playTrack);
         }
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
-            this.playerService.removeCallback(this.playPost);
+            this.playerService.removePostCallback(this.playPost);
+            this.playerService.removeTrackCallback(this.playTrack);
+        }
+    }, {
+        key: 'playTrack',
+        value: function playTrack(currentTrack) {
+            this.setState({ currentTrack: currentTrack });
         }
 
         /**
-         *
          * @param post {PostEntity}
          */
 
@@ -33797,8 +33857,47 @@ var Player = function (_React$Component) {
             );
         }
     }, {
+        key: 'currentTrack',
+        value: function currentTrack() {
+            if (this.state.currentTrack === null) {
+                return '';
+            }
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                '\u0421\u0435\u0439\u0447\u0430\u0441 \u0438\u0433\u0440\u0430\u0435\u0442:',
+                this.state.currentTrack.artist,
+                ' \u2014 ',
+                this.state.currentTrack.title
+            );
+        }
+    }, {
+        key: 'playlist',
+        value: function playlist() {
+            var _this2 = this;
+
+            if (this.state.post === null) {
+                return '';
+            }
+            return _react2.default.createElement(
+                'div',
+                { hidden: this.state.hidePlaylist, className: 'playerPlayList' },
+                this.state.post.tracks.map(function (track, index) {
+                    return _react2.default.createElement(_track2.default, { key: index, track: track, currentTrack: _this2.state.currentTrack });
+                })
+            );
+        }
+    }, {
+        key: 'togglePlaylist',
+        value: function togglePlaylist() {
+            this.setState({ hidePlaylist: !this.state.hidePlaylist });
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this3 = this;
+
             return _react2.default.createElement(
                 'div',
                 { className: 'player' },
@@ -33818,13 +33917,17 @@ var Player = function (_React$Component) {
                     { className: 'playerButton __next' },
                     '\u2192'
                 ),
+                this.currentTrack(),
                 _react2.default.createElement('div', { className: 'playerProgress' }),
                 _react2.default.createElement('div', { className: 'playerSound' }),
                 _react2.default.createElement(
                     'button',
-                    { className: 'playerPlaylist' },
+                    { onClick: function onClick() {
+                            return _this3.togglePlaylist();
+                        }, className: 'playerShowPlaylist' },
                     'show playlist'
-                )
+                ),
+                this.playlist()
             );
         }
     }]);
@@ -33834,7 +33937,7 @@ var Player = function (_React$Component) {
 
 exports.default = Player;
 
-},{"../../../di":531,"react":527}],543:[function(require,module,exports){
+},{"../../../di":531,"../track/track":547,"react":527}],543:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34162,6 +34265,96 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _di = require('../../../di');
+
+var _di2 = _interopRequireDefault(_di);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Track = function (_React$Component) {
+    _inherits(Track, _React$Component);
+
+    function Track() {
+        var _ref;
+
+        _classCallCheck(this, Track);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        //noinspection JSUnresolvedVariable
+        var _this = _possibleConstructorReturn(this, (_ref = Track.__proto__ || Object.getPrototypeOf(Track)).call.apply(_ref, [this].concat(args)));
+
+        _this.playerService = _di2.default.container.PlayerService;
+        return _this;
+    }
+
+    /** @member PlayerService */
+
+
+    _createClass(Track, [{
+        key: 'onPlayClick',
+        value: function onPlayClick(id) {
+            this.playerService.playTrack(id);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            return _react2.default.createElement(
+                'div',
+                { className: this.className },
+                this.props.track.artist,
+                ' \u2014 ',
+                this.props.track.title,
+                _react2.default.createElement(
+                    'button',
+                    { onClick: function onClick() {
+                            return _this2.onPlayClick(_this2.props.track.id);
+                        }, className: 'trackPlay' },
+                    'Play'
+                )
+            );
+        }
+    }, {
+        key: 'className',
+        get: function get() {
+            var className = "track";
+
+            if (this.props.track === this.props.currentTrack) {
+                className += ' __active';
+            }
+
+            return className;
+        }
+    }]);
+
+    return Track;
+}(_react2.default.Component);
+
+exports.default = Track;
+
+},{"../../../di":531,"react":527}],548:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var _reactRouter = require('react-router');
 
 var _di = require('../../di');
@@ -34295,7 +34488,7 @@ var Layout = function (_React$Component) {
 
 exports.default = Layout;
 
-},{"../../di":531,"../components/player/player":542,"react":527,"react-router":496}],548:[function(require,module,exports){
+},{"../../di":531,"../components/player/player":542,"react":527,"react-router":496}],549:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34347,7 +34540,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":543,"react":527,"react-router":496}],549:[function(require,module,exports){
+},{"../components/post-list/post-list":543,"react":527,"react-router":496}],550:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34404,7 +34597,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"react":527,"react-router":496}],550:[function(require,module,exports){
+},{"react":527,"react-router":496}],551:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34461,7 +34654,7 @@ var NotFound = function (_React$Component) {
 
 exports.default = NotFound;
 
-},{"../components/post-list/post-list":543,"../components/tag-list/tag-list":545,"react":527,"react-router":496}],551:[function(require,module,exports){
+},{"../components/post-list/post-list":543,"../components/tag-list/tag-list":545,"react":527,"react-router":496}],552:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -34504,4 +34697,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     )
 ), document.getElementById('react-app'));
 
-},{"./pages/layout":547,"./pages/main":548,"./pages/not-found":549,"./pages/tags":550,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[551]);
+},{"./pages/layout":548,"./pages/main":549,"./pages/not-found":550,"./pages/tags":551,"babel-polyfill":1,"react":527,"react-dom":343,"react-router":496}]},{},[552]);
