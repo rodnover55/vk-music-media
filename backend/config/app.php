@@ -172,11 +172,11 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        VkMusic\Providers\AppServiceProvider::class,
+        VkMusic\Providers\AuthServiceProvider::class,
+        // VkMusic\Providers\BroadcastServiceProvider::class,
+        VkMusic\Providers\EventServiceProvider::class,
+        VkMusic\Providers\RouteServiceProvider::class,
 
     ],
 
