@@ -4,6 +4,7 @@ const rename = require('gulp-rename');
 const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
+const stylus = require('gulp-stylus');
 
 gulp.task('scripts', () => {
     //noinspection JSUnresolvedFunction
@@ -21,6 +22,16 @@ gulp.task('scripts', () => {
         .pipe(gulp.dest('./../backend/public'));
 });
 
-gulp.task('watch', ['scripts'], () => {
+gulp.task('styles', () => {
+    gulp.src('./src/ui/pages/layout.styl')
+        .pipe(stylus())
+        .pipe(rename('app.css'))
+        .pipe(gulp.dest('./static'))
+        .pipe(rename({dirname: ''}))
+        .pipe(gulp.dest('./../backend/public'));
+});
+
+gulp.task('watch', ['scripts', 'styles'], () => {
     gulp.watch('./src/**/*.js', ['scripts']);
+    gulp.watch('./src/**/*.styl', ['styles']);
 });
