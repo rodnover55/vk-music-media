@@ -3,8 +3,10 @@
 namespace VkMusic\Http\Controllers;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use VkMusic\Models\Post;
 use VkMusic\Models\Tag;
+use VkMusic\Models\Track;
 use VkMusic\Service\VkApi;
 use DateTime;
 
@@ -69,6 +71,16 @@ class PostsRefreshController extends Controller
         $tags = $this->getTags($post->description);
         $post->tags()->sync(array_pluck($tags, 'id'));
 
+        $tracks = $this->getTracks(Collection::make($data['attachments'])->filter(
+            function (array $item) {
+                return $item['type'] == 'audio';
+            })->map(function (array $item) {
+                return $item['audio'];
+            })->toArray()
+        );
+
+        $post->tracks()->sync(array_pluck($tracks, 'id'));
+
         return $post;
     }
 
@@ -100,5 +112,26 @@ class PostsRefreshController extends Controller
         }
 
         return $tags;
+    }
+
+    /**
+     * @param array $tracks
+     * @return array|Track[]
+     */
+    public function getTracks($tracks) {
+        return array_map(function (array $item) {
+            return $this->saveTrack($item);
+        }, $tracks);
+    }
+
+    public function saveTrack($item): Track {
+        return Track::firstOrCreate([
+            'aid' => $item['id'] ?? $item['aid'],
+            'owner_id' => $item['owner_id']
+        ], [
+            'artist' => $item['artist'],
+            'title' => $item['title'],
+            'duration' => $item['duration']
+        ]);
     }
 }

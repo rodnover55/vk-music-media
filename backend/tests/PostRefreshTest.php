@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use VkMusic\Http\Controllers\PostsRefreshController;
 use VkMusic\Models\Post;
 use VkMusic\Models\Tag;
+use VkMusic\Models\Track;
 use VkMusic\Service\VkApi;
 use VkMusic\Tests\Support\DatabaseTruncate;
 use DateTime;
@@ -56,7 +57,7 @@ class PostRefreshTest extends TestCase
         $controller->savePost($postData);
 
         /** @var Post $post */
-        $post = Post::with(['tags'])->where([
+        $post = Post::with(['tags', 'tracks'])->where([
             'pid' => $postData['id'],
             'created_at' => (new DateTime())->setTimestamp($postData['date']),
             'title' => $controller->getTitle($postData),
@@ -67,11 +68,28 @@ class PostRefreshTest extends TestCase
 
         $tags = $controller->getTags($postData['text']);
 
+        $this->assertCount(4, $post->tags);
+
         $this->assertEquals(array_map(function (Tag $tag) {
             return $tag->attributesToArray();
         }, $tags), $post->tags->map(function (Tag $tag) {
             return $tag->attributesToArray();
         })->toArray());
+
+        $tracks = $controller->getTracks(Collection::make($postData['attachments'])->filter(
+            function (array $item) {
+                return $item['type'] == 'audio';
+            })->map(function (array $item) {
+            return $item['audio'];
+        })->toArray());
+
+        $this->assertCount(3, $post->tracks);
+
+        $this->assertEquals(array_values(array_map(function (Track $track) {
+            return $track->attributesToArray();
+        }, $tracks)), $post->tracks->map(function (Track $track) {
+            return $track->attributesToArray();
+        })->values()->toArray());
     }
 
     public function testDontSaveExits() {
@@ -144,11 +162,39 @@ class PostRefreshTest extends TestCase
 
         /** @var Tag $tag */
         $tag = $objects['tag'];
+
         /** @var PostsRefreshController $controller */
         $controller = $this->app->make(PostsRefreshController::class);
 
         $actual = $controller->getTags("#{$tag->tag}");
 
         $this->assertEquals([$tag->toArray()], Collection::make($actual)->toArray());
+    }
+
+    public function testSaveTrack() {
+        $track = $this->loadJsonFixture('track.json');
+
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $track = $controller->saveTrack($track);
+
+        $this->seeInDatabase('tracks', $track->attributesToArray());
+    }
+
+    public function testDontSaveExistingTrack() {
+        /** @var Track $expected */
+        $expected = $this->loadYmlFixture('track.yml')['track'];
+
+        $track = $this->loadJsonFixture('track.json');
+
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $track = $controller->saveTrack($track);
+
+        $this->assertEquals($expected->attributesToArray(), $track->attributesToArray());
+
+        $this->seeInDatabase('tracks', $track->attributesToArray());
     }
 }
