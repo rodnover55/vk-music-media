@@ -35605,10 +35605,15 @@ var Player = function (_React$Component) {
                 return '';
             }
 
-            return _react2.default.createElement(_reactPlayer2.default, _extends({ onProgress: function onProgress(_ref3) {
+            return _react2.default.createElement(_reactPlayer2.default, _extends({
+                onEnded: function onEnded() {
+                    return _this3.playNext();
+                },
+                onProgress: function onProgress(_ref3) {
                     var played = _ref3.played;
                     return _this3.onProgress(played);
-                } }, this.state.playerOptions));
+                }
+            }, this.state.playerOptions));
         }
     }, {
         key: 'togglePlaylist',

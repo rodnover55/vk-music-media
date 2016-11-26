@@ -97,7 +97,10 @@ export default class Player extends React.Component {
             return '';
         }
 
-        return <ReactPlayer onProgress={({played})=>this.onProgress(played)} {...this.state.playerOptions} />
+        return <ReactPlayer
+            onEnded={()=>this.playNext()}
+            onProgress={({played})=>this.onProgress(played)}
+            {...this.state.playerOptions} />
     }
 
     togglePlaylist() {
