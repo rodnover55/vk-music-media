@@ -2,6 +2,7 @@
 
 namespace VkMusic\Http\Controllers;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Response;
 use VkMusic\Models\Post;
 use VkMusic\Service\VkApi;
 use DateTime;
@@ -29,7 +30,7 @@ class PostsRefreshController extends Controller
             'count' => 1000,
             'extended' => 1,
             'fields' => 'id,name,screen_name'
-        ]);
+        ])['response'];
 
 
         $savedGroups = array_map(function (array $group) {
@@ -42,16 +43,25 @@ class PostsRefreshController extends Controller
         foreach ($wall as $post) {
             $this->savePost($post);
         }
+
+        return (new Response())->setStatusCode(Response::HTTP_NO_CONTENT);
     }
 
     public function savePost($data) {
-        $post = new Post([
+        $gid = -1 * $data['from_id'];
+
+        if ($gid < 0) {
+            return null;
+        }
+
+        $post = Post::firstOrCreate([
             'pid' => $data['id'],
+            'group_id' => $gid
+        ], [
             'created_at' => (new DateTime())->setTimestamp($data['date']),
             'title' => $this->getTitle($data),
             'image' => $data['attachment']['photo']['src'] ?? null,
             'description' => $data['text'],
-            'group_id' => -1 * $data['from_id']
         ]);
 
         $post->save();

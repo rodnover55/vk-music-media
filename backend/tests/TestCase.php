@@ -103,12 +103,16 @@ abstract class TestCase extends ParentTestCase
         $this->fixtureLoader = $this->app->make(FixturesLoader::class);
     }
 
-    public function loadFixture($name) {
+    public function loadYmlFixture($name) {
         $files = is_array($name) ? $name : [$name];
 
         return $this->fixtureLoader->load(array_map(function ($name) {
             return __DIR__ . "/fixtures/{$name}";
         }, $files));
+    }
+
+    public function loadJsonFixture($name) {
+        return json_decode(file_get_contents(__DIR__ . "/fixtures/{$name}"), true);
     }
 
     protected function auth($token) {
@@ -136,5 +140,6 @@ abstract class TestCase extends ParentTestCase
 
         return $response;
     }
+
 
 }

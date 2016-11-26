@@ -4,6 +4,7 @@ namespace VkMusic\Tests;
 
 use Illuminate\Http\Response;
 use VkMusic\Http\Controllers\PostsRefreshController;
+use VkMusic\Service\VkApi;
 use VkMusic\Tests\Support\DatabaseTruncate;
 use DateTime;
 
@@ -22,7 +23,21 @@ class PostRefreshTest extends TestCase
     }
 
     public function testGrab() {
-        $objects = $this->loadFixture('token.yml');
+        $objects = $this->loadYmlFixture('token.yml');
+
+        $this->app->instance(VkApi::class, new class($this) extends VkApi {
+            private $test;
+
+            public function __construct(TestCase $test)
+            {
+                $this->test = $test;
+            }
+
+            public function sendOpen(string $method, array $data)
+            {
+                return $this->test->loadJsonFixture('posts-response.json');
+            }
+        });
 
         $this->auth($objects['token']->token)->postJson('/api/posts-refresh');
 
@@ -33,7 +48,7 @@ class PostRefreshTest extends TestCase
         /** @var PostsRefreshController $controller */
         $controller = $this->app->make(PostsRefreshController::class);
 
-        $post = json_decode(file_get_contents(self::ROOT_TEST . '/fixtures/new-post.json'), true);
+        $post = $this->loadJsonFixture('new-post.json');
 
         $controller->savePost($post);
 
@@ -44,6 +59,44 @@ class PostRefreshTest extends TestCase
             'image' => $post['attachment']['photo']['src'] ?? null,
             'description' => $post['text'],
             'group_id' => -1 * $post['from_id']
+        ]);
+    }
+
+    public function testDontSaveExits() {
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $post = $this->loadJsonFixture('new-post.json');
+        $this->loadYmlFixture('post.yml');
+
+        $controller->savePost($post);
+
+        $this->seeInDatabase('posts', [
+            'pid' => $post['id'],
+            'created_at' => (new DateTime())->setTimestamp($post['date']),
+            'title' => $controller->getTitle($post),
+            'image' => $post['attachment']['photo']['src'] ?? null,
+            'description' => $post['text'],
+            'group_id' => -1 * $post['from_id']
+        ]);
+    }
+
+    public function testDontSaveUser() {
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $post = $this->loadJsonFixture('user-post.json');
+
+        $controller->savePost($post);
+
+        $this->dontSeeInDatabase('posts', [
+            'pid' => $post['id'],
+            'group_id' => -1 * $post['from_id']
+        ]);
+
+        $this->dontSeeInDatabase('posts', [
+            'pid' => $post['id'],
+            'group_id' => $post['from_id']
         ]);
     }
 }

@@ -21,6 +21,7 @@ class CreatePosts extends Migration
             $table->text('image')->nullable();
             $table->text('description');
             $table->timestamps();
+            $table->unique(['pid', 'group_id']);
         });
     }
 
