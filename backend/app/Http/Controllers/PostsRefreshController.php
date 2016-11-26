@@ -55,6 +55,7 @@ class PostsRefreshController extends Controller
             return null;
         }
 
+        /** @var Post $post */
         $post = Post::firstOrCreate([
             'pid' => $data['id'],
             'group_id' => $gid
@@ -65,7 +66,8 @@ class PostsRefreshController extends Controller
             'description' => $data['text'],
         ]);
 
-        $post->save();
+        $tags = $this->getTags($post->description);
+        $post->tags()->sync(array_pluck($tags, 'id'));
 
         return $post;
     }

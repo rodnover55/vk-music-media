@@ -51,23 +51,27 @@ class PostRefreshTest extends TestCase
         /** @var PostsRefreshController $controller */
         $controller = $this->app->make(PostsRefreshController::class);
 
-        $post = $this->loadJsonFixture('new-post.json');
+        $postData = $this->loadJsonFixture('new-post.json');
 
-        $controller->savePost($post);
+        $controller->savePost($postData);
 
         /** @var Post $post */
         $post = Post::with(['tags'])->where([
-            'pid' => $post['id'],
-            'created_at' => (new DateTime())->setTimestamp($post['date']),
-            'title' => $controller->getTitle($post),
-            'image' => $post['attachment']['photo']['src'] ?? null,
-            'description' => $post['text'],
-            'group_id' => -1 * $post['from_id']
+            'pid' => $postData['id'],
+            'created_at' => (new DateTime())->setTimestamp($postData['date']),
+            'title' => $controller->getTitle($postData),
+            'image' => $postData['attachment']['photo']['src'] ?? null,
+            'description' => $postData['text'],
+            'group_id' => -1 * $postData['from_id']
         ])->first();
 
-        $tags = $controller->getTags($post['text']);
+        $tags = $controller->getTags($postData['text']);
 
-        $this->assertEquals($tags, $post->tags->toArray());
+        $this->assertEquals(array_map(function (Tag $tag) {
+            return $tag->attributesToArray();
+        }, $tags), $post->tags->map(function (Tag $tag) {
+            return $tag->attributesToArray();
+        })->toArray());
     }
 
     public function testDontSaveExits() {
