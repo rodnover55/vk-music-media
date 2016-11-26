@@ -2,6 +2,8 @@
 
 namespace VkMusic\Providers;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -41,5 +43,11 @@ class RouteServiceProvider extends ServiceProvider
         ], function ($router) {
             require base_path('routes/api.php');
         });
+
+        $router->any('api/{route}', function () {
+            return new JsonResponse([
+                'error' => 'Not found'
+            ], Response::HTTP_NOT_FOUND);
+        })->where('route', '(.*)');;
     }
 }
