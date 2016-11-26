@@ -3,3 +3,11 @@ VkMusic\Models\Tag:
     tag: abc_1234
     created_at: '2016-11-26 17:54:18'
     updated_at: '2016-11-26 17:54:18'
+  tag-2:
+    tag: test
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'
+  tag-3:
+    tag: abc1234
+    created_at: '2016-11-26 18:56:27'
+    updated_at: '2016-11-26 18:56:27'

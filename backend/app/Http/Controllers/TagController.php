@@ -2,6 +2,7 @@
 
 namespace VkMusic\Http\Controllers;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use VkMusic\Models\Tag;
 
 
@@ -10,9 +11,13 @@ use VkMusic\Models\Tag;
  */
 class TagController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         $query = Tag::query();
 
+        if ($request->has('q')) {
+            $q = $request->get('q');
+            $query->where('tag', 'like', "%{$q}%");
+        }
         $tags = $query->pluck('tag');
 
         return new JsonResponse($tags);
