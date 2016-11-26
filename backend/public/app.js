@@ -34520,6 +34520,7 @@ var Entity = function (_CommonObject) {
         key: 'make',
         value: function make(entityClass, attributes) {
             var inst = new entityClass();
+            var parsers = entityClass.parsers || {};
 
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
@@ -34531,16 +34532,12 @@ var Entity = function (_CommonObject) {
                         key = _step2$value[0],
                         _value = _step2$value[1];
 
-                    if (!inst.hasOwnProperty(key)) {
-                        throw new TypeError(entityClass.name + ' don`t have property ' + key);
-                    }
-
-                    var parsers = entityClass.parsers || {};
-
-                    if (typeof parsers[key] === 'function') {
-                        inst[key] = parsers[key](_value);
-                    } else {
-                        inst[key] = _value;
+                    if (inst.hasOwnProperty(key)) {
+                        if (typeof parsers[key] === 'function') {
+                            inst[key] = parsers[key](_value);
+                        } else {
+                            inst[key] = _value;
+                        }
                     }
                 }
             } catch (err) {

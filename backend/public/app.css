@@ -227,3 +227,6 @@ body {
 .tag:first-child {
   margin-left: 0;
 }
+.tagList {
+  margin-bottom: 20px;
+}
