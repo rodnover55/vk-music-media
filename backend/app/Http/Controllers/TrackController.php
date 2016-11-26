@@ -1,7 +1,9 @@
 <?php
 
 namespace VkMusic\Http\Controllers;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use VkMusic\Models\Track;
 use VkMusic\Service\VkApi;
 
@@ -35,5 +37,28 @@ class TrackController extends Controller
         $track['link'] = $response['url'];
 
         return new JsonResponse($track);
+    }
+
+    public function index(Request $request) {
+        $query = Track::query();
+
+        if ($request->has('tags')) {
+            $tags = explode(',', $request->get('tags'));
+
+            $query->whereHas('posts.tags', function ($query) use ($tags) {
+                /** @var Builder $query */
+                $query->whereIn('tag', $tags);
+            });
+        }
+
+        if ($request->has('artist')) {
+            $artist = $request->get('artist');
+
+            $query->where(\DB::raw('lower(tracks.artist)'), mb_strtolower($artist));
+        }
+
+        $tracks = $query->get();
+
+        return new JsonResponse($tracks);
     }
 }
