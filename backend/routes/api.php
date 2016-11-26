@@ -11,3 +11,4 @@ $router->resource('/posts-refresh', Controllers\PostsRefreshController::class);
 $router->resource('/posts', Controllers\PostController::class);
 $router->resource('/tracks', Controllers\TrackController::class);
 $router->resource('/tags', Controllers\TagController::class);
+$router->resource('/favorites', Controllers\FavoritesController::class);
