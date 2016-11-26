@@ -11,6 +11,6 @@ use Illuminate\Database\Eloquent\Collection;
 class Post extends Model
 {
     public function tags() {
-        $this->belongsToMany(Tag::class, 'posts_tags');
+        return $this->belongsToMany(Tag::class, 'posts_tags');
     }
 }

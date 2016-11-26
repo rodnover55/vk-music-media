@@ -67,8 +67,7 @@ class PostRefreshTest extends TestCase
 
         $tags = $controller->getTags($post['text']);
 
-        $this->assertEquals($tags, $post->tags);
-
+        $this->assertEquals($tags, $post->tags->toArray());
     }
 
     public function testDontSaveExits() {
