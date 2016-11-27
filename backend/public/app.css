@@ -240,7 +240,7 @@ body {
 .tag {
   display: inline-block;
   color: #51aef0;
-  margin-left: 20px;
+  margin-right: 20px;
 }
 .tag:first-child {
   margin-left: 0;
