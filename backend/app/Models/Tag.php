@@ -9,5 +9,7 @@ namespace VkMusic\Models;
  */
 class Tag extends Model
 {
-
+    public function favorite() {
+        return $this->morphOne(Favorite::class, 'resource');
+    }
 }

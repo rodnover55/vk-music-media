@@ -1,0 +1,9 @@
+VkMusic\Models\Track:
+  track-nf:
+    aid: 456240
+    owner_id: 2000120414
+    artist: 'Zmey Gorynich'
+    title: Борода
+    duration: 232
+    created_at: '2016-11-26 18:46:26'
+    updated_at: '2016-11-26 18:46:26'

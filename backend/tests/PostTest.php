@@ -25,7 +25,7 @@ class PostTest extends TestCase
         foreach ($json as $post) {
             $this->seeJsonStructure([
                 'id', 'pid', 'group_id', 'created_at', 'title', 'image', 'description',
-                'created_at', 'updated_at',
+                'created_at', 'updated_at', 'favorite',
                 'tags' => [
                     '*'=> []
                 ],
@@ -56,7 +56,7 @@ class PostTest extends TestCase
 
         $this->seeJsonStructure([
             'id', 'pid', 'group_id', 'created_at', 'title', 'image', 'description',
-            'created_at', 'updated_at',
+            'created_at', 'updated_at', 'favorite',
             'tags' => [
                 '*'=> []
             ],
@@ -112,5 +112,21 @@ class PostTest extends TestCase
         $this->assertCount(1, $json);
 
         $this->assertEquals($object['post-2']->getKey(), $json[0]['id']);
+    }
+
+    public function testByFavorites() {
+        $object = $this->loadYmlFixture([
+            'get-posts.yml', 'second-post.yml', 'favorite-post.yml'
+        ]);
+
+        $this->auth($object['token']->token)->getJson('/api/posts?favorites=true');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(1, $json);
+
+        $this->assertEquals($object['post']->favorite->id, $json[0]['favorite']);
     }
 }

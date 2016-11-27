@@ -17,7 +17,12 @@ class PostController extends Controller
 {
     public function index(Request $request) {
         /** @var Post|Builder $query */
-        $query = Post::with(['tags', 'tracks']);
+        $query = Post::with(['tags', 'tracks', 'favorite' => function ($query) {
+            $token = $this->getToken();
+
+            /** @var Builder$query */
+            $query->where('user_id', $token->user->uid);
+        }]);
 
         if ($request->has('tags')) {
             $tags = explode(',', $request->get('tags'));
@@ -37,13 +42,26 @@ class PostController extends Controller
             });
         }
 
+        $favorites = $request->get('favorites');
+
+        if (!empty($favorites)) {
+            $query->whereHas('favorite', function ($query) {
+                $token = $this->getToken();
+                $query->where('user_id', $token->user->uid);
+            });
+        }
+
         $posts = $query->get();
 
         return new JsonResponse($this->transformPosts($posts));
     }
 
     public function show($id) {
-        $post = Post::with(['tags', 'tracks'])->findOrFail($id);
+        $post = Post::with(['tags', 'tracks', 'favorite' => function ($query) {
+            $token = $this->getToken();
+            /** @var Builder$query */
+            $query->where('user_id', $token->user->uid);
+        }])->findOrFail($id);
 
         return new JsonResponse($this->transformPost($post));
     }
@@ -65,6 +83,7 @@ class PostController extends Controller
         })->toArray();
 
         $post['tags'] = $tags;
+        $post['favorite'] = isset($item->favorite) ? ($item->favorite->id) : (null);
 
         return $post;
     }

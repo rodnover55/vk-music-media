@@ -15,9 +15,12 @@ use VkMusic\Models\Favorite;
 class FavoritesController extends Controller
 {
     public function store(FavoriteRequest $request) {
+        $token = $this->getToken();
+
         $favorite = Favorite::where([
             'resource_id' => $request->resource_id,
-            'resource_type' => $request->resource_type
+            'resource_type' => $request->resource_type,
+            'user_id' => $token->user->uid
         ])->first();
 
         if (isset($favorite)) {
@@ -28,7 +31,8 @@ class FavoritesController extends Controller
 
         $favorite = Favorite::create([
             'resource_id' => $request->resource_id,
-            'resource_type' => $request->resource_type
+            'resource_type' => $request->resource_type,
+            'user_id' => $token->user->uid
         ]);
 
         return new JsonResponse($favorite);

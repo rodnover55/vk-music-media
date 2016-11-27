@@ -1,6 +1,6 @@
 VkMusic\Models\Favorite:
   favorite:
-    resource_id: '@posts-1->id'
+    resource_id: '@post->id'
     resource_type: post
     user: '@users-3108667'
     created_at: '2016-11-26 22:32:31'

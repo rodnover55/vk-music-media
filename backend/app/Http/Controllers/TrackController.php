@@ -4,6 +4,7 @@ namespace VkMusic\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use VkMusic\Models\Track;
 use VkMusic\Service\VkApi;
 
@@ -57,8 +58,32 @@ class TrackController extends Controller
             $query->where(\DB::raw('lower(tracks.artist)'), mb_strtolower($artist));
         }
 
+        $favorites = $request->get('favorites');
+
+        if (!empty($favorites)) {
+            $query->whereHas('favorite', function ($query) {
+                $token = $this->getToken();
+                /** @var Builder $query */
+                $query->where('user_id', $token->user->uid);
+            });
+        }
+
         $tracks = $query->get();
 
-        return new JsonResponse($tracks);
+        return new JsonResponse($this->transformTracks($tracks));
+    }
+
+    public function transformTracks(Collection $tracks) {
+        return $tracks->map(function (Track $track) {
+            return $this->transformTrack($track);
+        });
+    }
+
+    public function transformTrack(Track $data) {
+        $track = $data->attributesToArray();
+
+        $track['favorite'] = $data->favorite->id ?? null;
+
+        return $track;
     }
 }

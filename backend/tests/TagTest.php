@@ -43,4 +43,19 @@ class TagTest extends TestCase
         $this->assertEquals([$objects['tag']->tag, $objects['tag-3']->tag], $json);
     }
 
+    public function testByFavorites() {
+        $object = $this->loadYmlFixture([
+            'tag.yml', 'token.yml', 'favorite-tag.yml'
+        ]);
+
+        $this->auth($object['token']->token)->getJson('/api/tags?favorites=true');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(1, $json);
+
+        $this->assertEquals($object['tag']->tag, $json[0]);
+    }
 }

@@ -99,4 +99,21 @@ class TrackTest extends TestCase
             'created_at', 'updated_at'
         ], $json[0]);
     }
+
+    public function testByFavorites() {
+        $object = $this->loadYmlFixture([
+            'track.yml', 'track-not-favorite.yml',
+            'token.yml', 'favorite-track.yml'
+        ]);
+
+        $this->auth($object['token']->token)->getJson('/api/tracks?favorites=true');
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertCount(1, $json);
+
+        $this->assertEquals($object['track']->favorite->id, $json[0]['favorite']);
+    }
 }
