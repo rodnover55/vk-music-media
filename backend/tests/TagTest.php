@@ -2,7 +2,6 @@
 
 namespace VkMusic\Tests;
 
-use Illuminate\Http\Request;
 use VkMusic\Tests\Support\DatabaseTruncate;
 
 
