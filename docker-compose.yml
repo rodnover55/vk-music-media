@@ -6,10 +6,12 @@ nginx:
     - php
   ports:
     - "443:443"
+    - "80:80"
+  volumes:
+    - "/var/lib/acme:/var/lib/acme"
+
 php:
   build: php
-  ports:
-    - "80:80"
   expose:
     - 80
   volumes:

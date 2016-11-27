@@ -51,6 +51,17 @@ class PostsRefreshController extends Controller
     }
 
     public function savePost($data) {
+        $audios = Collection::make($data['attachments'] ?? [])->filter(
+            function (array $item) {
+                return $item['type'] == 'audio';
+            })->map(function (array $item) {
+            return $item['audio'];
+        });
+
+        if ($audios->isEmpty()) {
+            return null;
+        }
+
         $gid = -1 * $data['from_id'];
 
         if ($gid < 0) {
@@ -71,13 +82,7 @@ class PostsRefreshController extends Controller
         $tags = $this->getTags($post->description);
         $post->tags()->sync(array_pluck($tags, 'id'));
 
-        $tracks = $this->getTracks(Collection::make($data['attachments'])->filter(
-            function (array $item) {
-                return $item['type'] == 'audio';
-            })->map(function (array $item) {
-                return $item['audio'];
-            })->toArray()
-        );
+        $tracks = $this->getTracks($audios->toArray());
 
         $post->tracks()->sync(array_pluck($tracks, 'id'));
 

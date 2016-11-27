@@ -130,6 +130,20 @@ class PostRefreshTest extends TestCase
         ]);
     }
 
+    public function testSaveEmpty() {
+        /** @var PostsRefreshController $controller */
+        $controller = $this->app->make(PostsRefreshController::class);
+
+        $post = $this->loadJsonFixture('empty-post.json');
+
+        $controller->savePost($post);
+
+        $this->dontSeeInDatabase('posts', [
+            'pid' => $post['id'],
+            'group_id' => -1 * $post['from_id']
+        ]);
+    }
+
     /**
      * @dataProvider tagsProvider
      * @param array $tags

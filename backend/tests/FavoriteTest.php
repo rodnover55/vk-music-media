@@ -4,6 +4,7 @@ namespace VkMusic\Tests;
 
 use Illuminate\Http\Response;
 use VkMusic\Models\Favorite;
+use VkMusic\Models\Token;
 use VkMusic\Tests\Support\DatabaseTruncate;
 
 
@@ -18,8 +19,10 @@ class FavoriteTest extends TestCase
         $objects = $this->loadYmlFixture(['post.yml', 'token.yml']);
 
         $postId = $objects['posts-1']->id;
+        /** @var Token $token */
+        $token = $objects['token'];
 
-        $this->auth($objects['token']->token)->postJson('/api/favorites', [
+        $this->auth($token->token)->postJson('/api/favorites', [
             'resource_id' => $postId,
             'resource_type' => 'post'
         ]);
@@ -32,7 +35,8 @@ class FavoriteTest extends TestCase
 
         $this->seeInDatabase('favorites', [
             'resource_id' => $postId,
-            'resource_type' => 'post'
+            'resource_type' => 'post',
+            'user_id' => $token->user->uid
         ]);
     }
 
@@ -51,5 +55,42 @@ class FavoriteTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_NO_CONTENT);
 
         $this->dontSeeInDatabase('favorites', $favorite->attributesToArray());
+    }
+
+    public function testPostFavorite() {
+        $objects = $this->loadYmlFixture(['post.yml', 'token.yml', 'favorite.yml']);
+
+        $postId = $objects['posts-1']->id;
+        /** @var Favorite $favorite */
+        $favorite = $objects['favorite'];
+
+        $this->auth($objects['token']->token)->getJson("/api/posts/{$postId}");
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertEquals($favorite->id, $json['favorite']);
+    }
+
+    public function testTagFavorite() {
+
+    }
+
+    public function testTrackFavorite() {
+        $objects = $this->loadYmlFixture([
+            'track.yml', 'token.yml', 'favorite-track.yml'
+        ]);
+
+        /** @var Favorite $favorite */
+        $favorite = $objects['favorite'];
+
+        $this->auth($objects['token']->token)->getJson("/api/tracks");
+
+        $this->assertResponseOk();
+
+        $json = $this->decodeResponseJson();
+
+        $this->assertEquals($favorite->id, $json[0]['favorite']);
     }
 }

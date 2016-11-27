@@ -2,7 +2,11 @@
 
 namespace VkMusic\Providers;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use VkMusic\Models\Post;
+use VkMusic\Models\Tag;
+use VkMusic\Models\Track;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +17,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Relation::morphMap([
+            'post' => Post::class,
+            'tag' => Tag::class,
+            'track' => Track::class
+        ]);
     }
 
     /**
